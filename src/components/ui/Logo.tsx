@@ -94,7 +94,7 @@ export function Logo({
       <span
         aria-hidden="true"
         className={clsx(
-          'pl-[0.22em] font-serif leading-none font-semibold tracking-[0.22em] uppercase',
+          'pl-[0.22em] font-serif leading-none font-semibold tracking-[0.22em] whitespace-nowrap uppercase',
           s.name,
         )}
       >

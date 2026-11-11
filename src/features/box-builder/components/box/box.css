@@ -1,7 +1,7 @@
 /*
  * Hộp quà Kinh Thành: 2.5D bằng CSS 3D. Mọi kích thước tính từ `--bw` (chiều rộng hộp) và các biến
  * lưới do GiftBox đặt (--cols --rows --wu --hu --ar --mx --my). `--open` (0..1) có thể được cha đặt
- * (GSAP tween biến này), nên ở đây luôn dùng var(--open, 0). Màu chỉ lấy từ token.
+ * (CSS transition hoặc cha đặt biến này), nên ở đây luôn dùng var(--open, 0). Màu chỉ lấy từ token.
  */
 
 .gb {
@@ -259,7 +259,7 @@
   width: calc(var(--bw) / var(--ar) * 1.02);
   aspect-ratio: 1;
   translate: -50% -50%;
-  rotate: calc(var(--open, 0) * 14deg);
+  rotate: calc(var(--open, 0) * 12deg);
 }
 
 .gb-drum svg {
@@ -331,7 +331,7 @@
 
 /* ---------- Ruy băng (T11) ---------- */
 
-/* Đăng ký --open là số để CSS có thể chuyển tiếp nó (nắp đóng/mở mượt); GSAP vẫn tween như cũ. */
+/* Đăng ký --open là số để CSS có thể chuyển tiếp nó (nắp đóng/mở mượt). */
 @property --open {
   syntax: '<number>';
   inherits: true;

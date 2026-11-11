@@ -1,6 +1,6 @@
 # Kinh Thành Chocolate – website
 
-**English summary.** A Vietnamese-language storefront for a premium chocolate brand. Visitors pick a box size (6/9/12/16), place individual pieces into a 3D CSS gift box (drag and drop on desktop, tap-to-place on mobile), add a card message and submit an order. Frontend only: orders go to a mock service by default and can be pointed at a Google Apps Script endpoint. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind v4, Zustand, Zod, GSAP, dnd-kit and Vitest. Quick start: `npm ci && npm run dev`, then open http://localhost:3000.
+**English summary.** A Vietnamese-language storefront for a premium chocolate brand. Visitors pick a box size (6/9/12/16), place individual pieces into a 3D CSS gift box (drag and drop on desktop, tap-to-place on mobile), add a card message and submit an order. Frontend only: orders go to a mock service by default and can be pointed at a Google Apps Script endpoint. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind v4, Zustand, Zod, dnd-kit and Vitest. Quick start: `npm ci && npm run dev`, then open http://localhost:3000.
 
 ## Giới thiệu
 
@@ -53,12 +53,17 @@ src/config               Cấu hình site (tên, tagline)
 src/content              Nội dung chữ tiếng Việt
 data/                    Dữ liệu JSON (chocolates, boxes)
 public/chocolates        Ảnh chocolate (tạm)
+public/media             Video + ảnh nền hero (tạm, xem public/media/README.md)
 docs/                    Tài liệu dự án
 ```
 
 ## Thay dữ liệu và ảnh chocolate
 
 Tên, giá, mô tả, ảnh của từng viên nằm trong `data/chocolates.json`, giá hộp theo cỡ trong `data/boxes.json`; ảnh đặt ở `public/chocolates/`. Không cần sửa code. Xem hướng dẫn ở [data/README.md](data/README.md).
+
+## Thay video / ảnh nền hero
+
+Video nền ở `public/media/hero.mp4`, ảnh hiện ngay và dùng khi giảm chuyển động ở `public/media/hero-poster.jpg`. Hai tệp hiện tại chỉ là bản tạm. Thay bằng tệp thật giữ NGUYÊN TÊN là xong, không cần sửa code. Khuyến nghị: 1920×1080, H.264 MP4 + AAC, ≤ 8–10 MB, lặp liền 10–20 giây, chủ thể nằm ở 55% bên phải khung hình (bên trái là chữ). Nếu video không có tiếng, đặt `heroVideoHasAudio: false` trong `src/config/media.ts`. Chi tiết (cả bản mobile tuỳ chọn): [public/media/README.md](public/media/README.md).
 
 ## Đặt hàng hoạt động thế nào
 

@@ -11,7 +11,7 @@ export type GiftBoxProps = {
   rows: number;
   /**
    * Độ mở nắp 0 (đóng) → 1 (mở). Không truyền: kế thừa biến CSS `--open` từ phần tử cha
-   * (để GSAP điều khiển từ ngoài mà không render lại React).
+   * (để CSS transition ở cha điều khiển mà không render lại React).
    */
   open?: number;
   /** Bọc logo trên nắp bằng h1 (chỉ một nơi trong trang). */

@@ -6,8 +6,8 @@ Khách chọn size hộp → xếp TỪNG VIÊN vào ô → thêm lời nhắn �
 Giai đoạn hiện tại: CHỈ frontend. Gửi đơn qua `OrderService` (interface), dùng mock; sau này thay bằng Google Apps Script (Google Sheet).
 
 ## Trải nghiệm
-- Hero: hộp quà đóng, ánh sáng mờ, tên thương hiệu "Kinh Thành".
-- Cuộn xuống: nắp mở mượt theo thanh cuộn (GSAP ScrollTrigger), lộ ô trống.
+- Hero: nền video (có nút bật tiếng), slogan, hộp quà đóng nhỏ và nút "Đặt hàng ngay" bên trái.
+- Thứ tự trang: Hero (video nền) → Câu chuyện → Hộp quà mở nắp khi cuộn tới và chính là phần xếp hộp (D41, D42).
 - Builder (section thường, không chiếm quyền cuộn): size 6/9/12/16 (3×2, 3×3, 4×3, 4×4 — cột×hàng); kéo-thả desktop, chạm-để-chọn mobile; hiệu ứng rơi nhẹ.
 - Hộp đầy: nắp đóng → ruy băng → lời nhắn → tóm tắt + đặt hàng.
 - Hỗ trợ prefers-reduced-motion và bàn phím.

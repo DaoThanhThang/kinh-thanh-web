@@ -32,8 +32,10 @@ type Props = {
   locked?: boolean;
   /** Ruy băng trên nắp (null = chưa thắt). */
   ribbon?: RibbonState | null;
-  /** Bỏ chuyển tiếp nắp (hộp đã đầy từ trước khi tải trang). */
+  /** Bỏ chuyển tiếp nắp (hộp đã đầy / đã có viên từ trước khi tải trang). */
   instant?: boolean;
+  /** Nắp đang mở lần đầu (mở khi tới nơi): chuyển tiếp dài hơn một chút. */
+  opening?: boolean;
 };
 
 type MenuPos = { left: number; top: number; above: boolean };
@@ -58,6 +60,7 @@ export function BoxStage({
   locked = closed,
   ribbon = null,
   instant = false,
+  opening = false,
 }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -153,6 +156,7 @@ export function BoxStage({
       className="bb-stage"
       data-closed={closed ? 'true' : undefined}
       data-instant={instant ? 'true' : undefined}
+      data-arrival={opening ? 'opening' : undefined}
       inert={locked}
     >
       <GiftBox

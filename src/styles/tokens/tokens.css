@@ -1,6 +1,6 @@
 /*
  * Design tokens: nguồn duy nhất cho màu, chữ, khoảng cách, bo góc, bóng, easing, thời lượng.
- * motion.ts phản chiếu các giá trị easing/duration (dùng cho GSAP); sửa ở đây trước.
+ * motion.ts phản chiếu các giá trị easing/duration (dùng cho JS); sửa ở đây trước.
  * Thang màu lấy từ bao bì khách gửi: nền nâu cacao, foil vàng champagne, kem ngà.
  */
 

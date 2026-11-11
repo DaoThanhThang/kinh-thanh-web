@@ -4,7 +4,6 @@ import { useMemo, useState, type ReactNode } from 'react';
 import {
   DndContext,
   DragOverlay,
-  TouchSensor,
   pointerWithin,
   rectIntersection,
   useDndContext,
@@ -23,7 +22,12 @@ import { builder as t } from '@/content/builder';
 import { TRAY_ZONE_ID, parseSource, resolveDrop, type DropAction } from '../../../model/drop';
 import type { Slots } from '../../../model/types';
 import { markDragEnded } from './dragGuard';
-import { GridKeyboardSensor, MousePenSensor, gridCoordinateGetter } from './sensors';
+import {
+  GridKeyboardSensor,
+  LazyTouchSensor,
+  MousePenSensor,
+  gridCoordinateGetter,
+} from './sensors';
 
 /** Ưu tiên ô dưới con trỏ; không có con trỏ (bàn phím) thì dùng phần giao của hình chữ nhật. */
 const collisionDetection: CollisionDetection = (args) => {
@@ -68,7 +72,7 @@ export function BuilderDnd({ slots, byId, onDrop, children }: Props) {
 
   const sensors = useSensors(
     useSensor(MousePenSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+    useSensor(LazyTouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
     useSensor(GridKeyboardSensor, { coordinateGetter: gridCoordinateGetter }),
   );
 

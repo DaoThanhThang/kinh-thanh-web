@@ -2,9 +2,8 @@ import { getBoxOptions, getChocolates } from '@/lib/services/catalog';
 import { Builder } from '@/features/box-builder/components/builder/Builder';
 import { Hero } from '@/features/storytelling/Hero';
 import { Story } from '@/features/storytelling/Story';
-import { OpenScene } from '@/features/storytelling/OpenScene';
 
-/** Hộp mặc định cho hero và cảnh mở nắp: cỡ 12 (D12), dự phòng 4×3 nếu dữ liệu thiếu. */
+/** Hộp mặc định cho hero: cỡ 12 (D12), dự phòng 4×3 nếu dữ liệu thiếu. */
 const DEFAULT_SIZE = 12;
 
 export default async function Home() {
@@ -15,7 +14,6 @@ export default async function Home() {
   return (
     <main id="main">
       <Hero cols={cols} rows={rows} />
-      <OpenScene cols={cols} rows={rows} />
       <Story />
       <Builder chocolates={chocolates} boxes={boxes} />
     </main>

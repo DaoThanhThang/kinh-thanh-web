@@ -21,3 +21,4 @@ Trạng thái: ⬜ chưa làm · 🔄 đang làm · ⏳ chờ duyệt · ✅ xon
 | T14 | Accessibility & hiệu năng | ⬜ |
 | T15 | E2E (Playwright) & SEO | ⬜ |
 | T16 | Kết nối Google Apps Script (sau) | ⬜ |
+| R1 | Sửa đổi 1 của khách: Hero có video nền + âm thanh, thứ tự Hero → Câu chuyện → Hộp mở là builder, mượt hơn trên mobile (D41–D50) | ⏳ |

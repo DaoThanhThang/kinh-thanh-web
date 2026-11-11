@@ -201,12 +201,20 @@
   --shrink: 0;
   /* Gần như chiếu song song: nắp dựng lên không phình ra hai bên. */
   perspective: calc(var(--bw) * 14);
-  /* Chỗ cho nắp dựng lên phía sau hộp (nắp thấp hơn, đỡ chiếm chỗ của lưới). */
+  /*
+   * Chỗ cho nắp dựng lên phía sau hộp: LUÔN chừa sẵn (không đổi theo --open) để mở/đóng nắp không
+   * làm bố cục dịch, chỉ transform/opacity chạy (R1: mượt khi cuộn mobile).
+   */
   --lid-room: 0.27;
-  /* Bước hoàn tất: --open chuyển 1 → 0 (nắp đóng) và ngược lại, 1200ms ease-in-out-soft. */
   --tilt0: 12deg;
-  margin-top: calc(var(--bw) / var(--ar) * var(--lid-room) * var(--open, 1));
+  margin-top: calc(var(--bw) / var(--ar) * var(--lid-room));
+  /* Đóng/mở nắp (bước hoàn tất): --open chuyển 1 ↔ 0, 1200ms ease-in-out-soft. */
   transition: --open 1200ms var(--ease-in-out-soft);
+}
+
+/* Nắp mở lần đầu khi hộp tới màn hình: chậm hơn một chút. */
+.bb-stage[data-arrival='opening'] .bb-box {
+  transition-duration: 1400ms;
 }
 
 .bb-stage[data-instant='true'] .bb-box {

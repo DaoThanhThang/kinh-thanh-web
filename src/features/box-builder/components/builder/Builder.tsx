@@ -23,6 +23,7 @@ import { justDragged } from './dnd/dragGuard';
 import { HoldBar } from './HoldBar';
 import { SizeSelector } from './SizeSelector';
 import { SummaryBar } from './SummaryBar';
+import { useBoxArrival } from './useBoxArrival';
 import './builder.css';
 
 /** Cỡ hộp mặc định khi chưa chọn (D12: 4×3). */
@@ -92,8 +93,14 @@ export function Builder({
 
   // Bước hoàn tất (T11): hộp đầy → đóng nắp → ruy băng → thiệp; bỏ viên → về chế độ sửa.
   const { phase, instant, reopen } = useCompletion(full, ready);
+  // Hộp đóng khi vừa tới, mở nắp một lần khi vào khung nhìn (D42).
+  const hasPieces = slots.some((s) => s !== null);
+  const arrival = useBoxArrival(boxAreaRef, hasPieces);
+  const arrivalInit = arrival.init;
+  const arrived = arrival.state === 'open';
   const editing = phase === 'edit';
-  const lidClosed = phase === 'closing' || phase === 'tying' || phase === 'ready';
+  const lidClosed =
+    arrival.state === 'pending' || phase === 'closing' || phase === 'tying' || phase === 'ready';
   const ribbon =
     phase === 'tying'
       ? 'tying'
@@ -157,12 +164,13 @@ export function Builder({
       const removed = sanitizeWith(chocolates, boxes);
       if (removed.length > 0) announce(t.announceRemovedOnLoad(removed.length));
       if (useBoxStore.getState().size === null && defaultBox) selectSize(defaultBox.size);
+      arrivalInit(useBoxStore.getState().slots.some((s) => s !== null));
       setReady(true);
     });
     return () => {
       cancelled = true;
     };
-  }, [chocolates, boxes, defaultBox, sanitizeWith, selectSize, announce]);
+  }, [chocolates, boxes, defaultBox, sanitizeWith, selectSize, announce, arrivalInit]);
 
   // Ô chọn nằm ngoài hộp (đổi cỡ) hoặc đã có viên → bỏ chọn.
   const selectedValid = selected !== null && selected < slots.length && slots[selected] === null;
@@ -363,9 +371,10 @@ export function Builder({
                     fresh={fresh}
                     onRemove={remove}
                     closed={lidClosed}
-                    locked={!editing}
+                    locked={!editing || !arrived}
                     ribbon={ribbon}
-                    instant={instant}
+                    instant={instant || arrival.instant}
+                    opening={arrival.state === 'opening'}
                   />
                 ) : null}
               </div>

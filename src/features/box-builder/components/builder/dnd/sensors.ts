@@ -2,11 +2,49 @@ import {
   type DraggableNode,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   type KeyboardCoordinateGetter,
   type KeyboardSensorOptions,
   type PointerSensorOptions,
 } from '@dnd-kit/core';
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
+
+/**
+ * Chạm tay: dnd-kit mặc định gắn một listener `touchmove` KHÔNG passive lên window ngay khi mount
+ * (để preventDefault hoạt động trên iOS), khiến mọi lần vuốt cuộn trên trang phải chờ luồng chính.
+ * Ở đây chỉ gắn nó khi ngón tay chạm vào một phần tử kéo được (`[aria-roledescription]`, do
+ * dnd-kit đặt) và gỡ khi nhả; vuốt cuộn ở chỗ khác không bị chặn (R1).
+ */
+export class LazyTouchSensor extends TouchSensor {
+  static override setup() {
+    const noop = () => {};
+    let armed = false;
+    const arm = () => {
+      if (armed) return;
+      armed = true;
+      window.addEventListener('touchmove', noop, { capture: false, passive: false });
+    };
+    const disarm = () => {
+      if (!armed) return;
+      armed = false;
+      window.removeEventListener('touchmove', noop);
+    };
+    const onStart = (event: TouchEvent) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('[aria-roledescription]')) arm();
+    };
+    // Passive + capture: chạy trước handler của React, không chặn cuộn.
+    window.addEventListener('touchstart', onStart, { capture: true, passive: true });
+    window.addEventListener('touchend', disarm, { capture: true, passive: true });
+    window.addEventListener('touchcancel', disarm, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('touchstart', onStart, { capture: true });
+      window.removeEventListener('touchend', disarm, { capture: true });
+      window.removeEventListener('touchcancel', disarm, { capture: true });
+      disarm();
+    };
+  }
+}
 
 /** Chuột / bút: kéo sau 6px để bấm thường vẫn là bấm. Chạm tay do TouchSensor (giữ 250ms) lo. */
 export class MousePenSensor extends PointerSensor {
