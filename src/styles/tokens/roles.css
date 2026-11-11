@@ -1,0 +1,97 @@
+/*
+ * Vai trò chữ (type roles). Giá trị đọc từ tokens.css.
+ * Chữ sáng trên nền tối: line-height và tracking nhỉnh hơn một chút.
+ */
+
+@utility type-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+@utility type-title {
+  font-family: var(--font-serif);
+  /* Nét mảnh của Noto Serif Display 400 mất ở cỡ nhỏ: dưới ~2.25rem dùng 600 (D25). */
+  font-weight: 600;
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--text-title--letter-spacing);
+  text-wrap: balance;
+
+  @media (min-width: 48rem) {
+    font-weight: 400;
+  }
+}
+
+@utility type-heading {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--text-heading);
+  line-height: var(--text-heading--line-height);
+  letter-spacing: var(--text-heading--letter-spacing);
+  text-wrap: balance;
+}
+
+@utility type-lead {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--text-lead);
+  line-height: var(--text-lead--line-height);
+  letter-spacing: var(--text-lead--letter-spacing);
+  text-wrap: balance;
+}
+
+@utility type-body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  letter-spacing: var(--text-body--letter-spacing);
+  text-wrap: pretty;
+  max-width: var(--measure-prose);
+}
+
+@utility type-small {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--text-small);
+  line-height: var(--text-small--line-height);
+  letter-spacing: var(--text-small--letter-spacing);
+  text-wrap: pretty;
+  max-width: var(--measure-prose);
+}
+
+@utility type-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+}
+
+/* Số tabular cho giá. */
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/*
+ * Section sáng xen kẽ (nền kem ngà). Đổi nghĩa các token theo vai trò,
+ * nên utility như text-accent, bg-line, text-text-muted tự đúng trên nền sáng.
+ */
+.theme-paper {
+  color-scheme: light;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-ink-muted);
+  --color-accent: var(--color-accent-on-paper);
+  --color-accent-bright: var(--color-ink);
+  --color-focus: var(--color-accent-on-paper);
+  --color-line: var(--color-foil-600);
+}

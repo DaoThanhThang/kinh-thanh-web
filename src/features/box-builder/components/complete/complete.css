@@ -1,0 +1,245 @@
+/*
+ * Bước hoàn tất (T11): khung chứa thiệp + form lời nhắn + nút tiếp tục. Màu/khoảng cách từ token.
+ * Thiệp theo thiệp nhỏ trong ảnh bao bì: nền cacao, khung foil hai nét, cổng thành, đồi sóng.
+ */
+
+.cc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cc-heading:focus {
+  outline: none;
+}
+
+.cc-heading:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.cc-lead {
+  min-height: 1.7em;
+  margin: 0;
+}
+
+.cc-reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  animation: cc-in var(--duration-slow) var(--ease-out-expo) both;
+}
+
+@keyframes cc-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Thiệp ---------- */
+
+.cc-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.5rem 1.5rem 3rem;
+  min-height: 15rem;
+  overflow: hidden;
+  color: var(--color-accent);
+  background:
+    var(--texture-grain),
+    linear-gradient(160deg, var(--color-cacao-800), var(--color-cacao-900) 70%);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Nét foil thứ hai bên trong khung (như tấm nhũ dập). */
+.cc-card::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.cc-waves {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 100%;
+  height: 34%;
+  opacity: 0.55;
+  --foil-w: 1px;
+}
+
+.cc-logo {
+  flex: none;
+}
+
+.cc-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.cc-to,
+.cc-from {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+}
+
+.cc-from {
+  text-align: right;
+}
+
+.cc-message {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.cc-message[data-empty='true'] {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
+/* ---------- Form ---------- */
+
+.cc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cc-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 30rem) {
+  .cc-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.cc-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cc-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.cc-optional {
+  font-weight: 300;
+  color: var(--color-text-muted);
+}
+
+.cc-counter {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.cc-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.625rem 0.875rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-out-expo);
+}
+
+.cc-input:hover {
+  border-color: var(--color-text-muted);
+}
+
+.cc-input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+.cc-textarea {
+  resize: vertical;
+  min-height: 5.5rem;
+  line-height: 1.55;
+}
+
+/* ---------- Hành động ---------- */
+
+.cc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cc-sum {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.cc-next {
+  width: 100%;
+}
+
+.cc-reopen {
+  align-self: flex-start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-reveal {
+    animation: none;
+  }
+}

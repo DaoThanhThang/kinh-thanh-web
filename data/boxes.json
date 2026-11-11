@@ -1,0 +1,30 @@
+[
+  {
+    "size": 6,
+    "cols": 3,
+    "rows": 2,
+    "price": 120000,
+    "name": "Hộp 6 viên"
+  },
+  {
+    "size": 9,
+    "cols": 3,
+    "rows": 3,
+    "price": 150000,
+    "name": "Hộp 9 viên"
+  },
+  {
+    "size": 12,
+    "cols": 4,
+    "rows": 3,
+    "price": 180000,
+    "name": "Hộp 12 viên"
+  },
+  {
+    "size": 16,
+    "cols": 4,
+    "rows": 4,
+    "price": 220000,
+    "name": "Hộp 16 viên"
+  }
+]

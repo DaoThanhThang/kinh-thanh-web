@@ -1,0 +1,457 @@
+/*
+ * Trang đặt hàng /dat-hang. Mobile trước: tóm tắt đơn rồi tới form, một cột. Từ 64rem: form bên
+ * trái, tóm tắt dính bên phải. Màu và khoảng cách lấy từ token.
+ */
+
+.co {
+  min-height: 100svh;
+  padding-block: calc(var(--site-header-h) + 1rem) var(--spacing-section);
+}
+
+.co-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.co-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.co-back {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-size: 0.9375rem;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  transition: color var(--duration-base) var(--ease-out-expo);
+}
+
+.co-back:hover {
+  color: var(--color-accent-bright);
+  text-decoration-color: var(--color-accent-bright);
+}
+
+.co-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.co-muted {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Bố cục ---------- */
+
+.co-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 64rem) {
+  .co-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: 4rem;
+    align-items: start;
+  }
+  .co-summary {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 1.5rem;
+  }
+  .co-form {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+/* ---------- Tóm tắt ---------- */
+
+.co-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+}
+
+.co-thumb {
+  --thumb: 12rem;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 0.5rem;
+}
+
+.co-thumb .gb {
+  --bw: var(--thumb);
+}
+
+/* Hộp nhỏ: họa tiết lockup quá chi tiết ở cỡ này, thu nhỏ logo và bỏ câu tagline. */
+.co-thumb .gb-lockup {
+  width: auto;
+  scale: 0.5;
+  white-space: nowrap;
+}
+
+.co-thumb .gb-tagline {
+  display: none;
+}
+
+.co-boxline {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.co-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.co-subhead {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  letter-spacing: 0.02em;
+}
+
+.co-pieces {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.co-pieces li,
+.co-price > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.co-pieces li span:last-child,
+.co-price dd {
+  color: var(--color-text-muted);
+}
+
+.co-quote {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.co-quote p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.co-quote-text {
+  font-size: 1.0625rem;
+  white-space: pre-line;
+}
+
+.co-quote-meta {
+  font-size: 0.9375rem;
+  color: var(--color-accent);
+}
+
+.co-quote-from {
+  text-align: right;
+}
+
+.co-price {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+  font-size: 0.9375rem;
+}
+
+.co-price dt,
+.co-price dd {
+  margin: 0;
+}
+
+.co-price .co-price-total {
+  padding-top: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.co-price .co-price-total dd {
+  color: var(--color-accent-bright);
+}
+
+/* ---------- Form ---------- */
+
+.co-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.co-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.co-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.co-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .co-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.co-label-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 1rem;
+}
+
+.co-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.co-req {
+  color: var(--color-accent);
+}
+
+.co-hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.co-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.625rem 0.875rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-out-expo);
+}
+
+.co-input:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
+}
+
+.co-input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+.co-input:disabled {
+  opacity: 0.6;
+}
+
+.co-input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.co-textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.co-error {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-error);
+}
+
+/* Ô ngày: lịch của trình duyệt theo màu tối. */
+input[type='date'].co-input {
+  color-scheme: dark;
+}
+
+/* ---------- Thanh toán ---------- */
+
+.co-pay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.co-pay legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.co-pay-options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 40rem) {
+  .co-pay-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.co-radio {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.co-radio input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.co-radio-face {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--duration-base) var(--ease-out-expo),
+    background-color var(--duration-base) var(--ease-out-expo);
+}
+
+.co-radio:hover .co-radio-face {
+  border-color: var(--color-accent);
+}
+
+.co-radio input:checked + .co-radio-face {
+  color: var(--color-accent-bright);
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+.co-radio input:focus-visible + .co-radio-face {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* ---------- Gửi đơn ---------- */
+
+.co-submit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.co-submit-btn {
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .co-submit-btn {
+    width: auto;
+    align-self: flex-start;
+  }
+}
+
+/* ---------- Trạng thái: thành công, hộp chưa đầy ---------- */
+
+.co-done,
+.co-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 36rem;
+  margin-block: 1rem;
+}
+
+.co-done h1:focus {
+  outline: none;
+}
+
+.co-done h1:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.co-thumb-done {
+  --thumb: 11rem;
+  justify-content: flex-start;
+}
+
+.co-orderid {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.co-orderid strong {
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-accent-bright);
+}

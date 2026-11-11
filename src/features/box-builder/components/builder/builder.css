@@ -1,0 +1,1071 @@
+/*
+ * Phần xếp hộp (#builder) và khay chọn viên. Mobile trước: một cột, thanh tóm tắt dính đáy phần này.
+ * Từ 64rem: hộp bên trái, khay bên phải. Màu và khoảng cách lấy từ token.
+ */
+
+.bb {
+  padding-block: var(--spacing-section);
+  background: radial-gradient(
+    ellipse 90% 40% at 50% 0%,
+    color-mix(in srgb, var(--color-foil-300) 7%, transparent),
+    transparent 70%
+  );
+}
+
+.bb-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.bb-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ---------- Chọn cỡ ---------- */
+
+.bb-sizes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+@media (min-width: 40rem) {
+  .bb-sizes {
+    max-width: 36rem;
+    gap: 0.75rem;
+  }
+}
+
+.bb-size {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.bb-size-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.bb-size-face {
+  display: flex;
+  min-height: 3.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  padding: 0.5rem 0.25rem;
+  text-align: center;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-out-expo),
+    transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.bb-size:hover .bb-size-face {
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.bb-size-input:checked + .bb-size-face {
+  color: var(--color-accent-bright);
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+.bb-size-input:focus-visible + .bb-size-face {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.bb-size-name {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.bb-size-price {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.bb-size-input:checked + .bb-size-face .bb-size-price {
+  color: var(--color-text);
+}
+
+@media (min-width: 40rem) {
+  .bb-size-price {
+    font-size: 0.8125rem;
+  }
+}
+
+/* ---------- Bố cục ---------- */
+
+.bb-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.bb-box-area {
+  container-type: inline-size;
+  overflow-x: clip;
+}
+
+/* Điện thoại hẹp: hộp tràn sát mép để ô luôn ≥ 64px (D18). */
+@media (max-width: 39.99rem) {
+  .bb-box-area {
+    margin-inline: calc(-1 * var(--spacing-gutter));
+  }
+}
+
+/* Mobile: .bb-main không tạo hộp, để thanh tóm tắt dính đáy theo .bb-layout; tóm tắt xếp cuối. */
+.bb-main {
+  display: contents;
+}
+
+.bb-summary-area {
+  order: 3;
+}
+
+@media (min-width: 64rem) {
+  .bb-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: 3rem;
+    align-items: start;
+  }
+  .bb-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    grid-column: 1;
+  }
+  .bb-tray-area {
+    grid-column: 2;
+  }
+  .bb-summary-area {
+    order: 0;
+  }
+}
+
+/* Bước hoàn tất (G3): hộp đóng nằm giữa theo chiều dọc so với cột thiệp, không dính đầu. */
+@media (min-width: 64rem) {
+  .bb-layout[data-complete='true'] {
+    align-items: center;
+  }
+}
+
+/* Màn hình đủ cao: hộp và tóm tắt đứng yên khi cuộn qua khay dài. */
+@media (min-width: 64rem) and (min-height: 56rem) {
+  .bb-layout:not([data-complete='true']) .bb-main {
+    position: sticky;
+    top: 1.5rem;
+  }
+}
+
+/* ---------- Hộp mở ---------- */
+
+.bb-stage {
+  position: relative;
+  display: flow-root;
+}
+
+.bb-box {
+  --bw: 100cqw;
+  --tilt1: 8deg;
+  --lid-max: 94deg;
+  --shift-y: 0;
+  --shrink: 0;
+  /* Gần như chiếu song song: nắp dựng lên không phình ra hai bên. */
+  perspective: calc(var(--bw) * 14);
+  /* Chỗ cho nắp dựng lên phía sau hộp (nắp thấp hơn, đỡ chiếm chỗ của lưới). */
+  --lid-room: 0.27;
+  /* Bước hoàn tất: --open chuyển 1 → 0 (nắp đóng) và ngược lại, 1200ms ease-in-out-soft. */
+  --tilt0: 12deg;
+  margin-top: calc(var(--bw) / var(--ar) * var(--lid-room) * var(--open, 1));
+  transition: --open 1200ms var(--ease-in-out-soft);
+}
+
+.bb-stage[data-instant='true'] .bb-box {
+  transition: none;
+}
+
+.bb-cell-btn {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 1px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Vòng focus trong ô vàng: hai lớp (kem + cacao) để đủ tương phản trên nền foil. */
+.bb-cell-btn:focus-visible {
+  outline: 2px solid var(--color-ivory-50);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 5px var(--color-cacao-950);
+}
+
+/* Ô trống: viền khắc chìm. */
+.bb-engrave {
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 24%;
+  border: 1px solid color-mix(in srgb, var(--color-foil-300) 40%, transparent);
+  box-shadow:
+    inset 0 2px 4px color-mix(in srgb, var(--color-cacao-950) 55%, transparent),
+    0 1px 0 color-mix(in srgb, var(--color-foil-300) 28%, transparent);
+  transition:
+    border-color var(--duration-base) var(--ease-out-expo),
+    background-color var(--duration-base) var(--ease-out-expo);
+}
+
+.bb-cell-btn[data-filled='false']:hover .bb-engrave {
+  border-color: var(--color-foil-300);
+  background: color-mix(in srgb, var(--color-foil-300) 10%, transparent);
+}
+
+.bb-cell-btn[aria-pressed='true'] .bb-engrave {
+  border-color: var(--color-ivory-50);
+  background: color-mix(in srgb, var(--color-ivory-50) 14%, transparent);
+}
+
+.bb-piece {
+  display: block;
+  width: 90%;
+  transition: transform var(--duration-base) var(--ease-out-expo);
+}
+
+.bb-piece img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--color-cacao-950) 60%, transparent));
+}
+
+.bb-cell-btn[data-filled='true']:hover .bb-piece {
+  transform: scale(1.04);
+}
+
+.bb-piece-drop {
+  animation: bb-drop var(--duration-base) var(--ease-out-expo) both;
+}
+
+@keyframes bb-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-piece-drop {
+    animation: none;
+  }
+}
+
+/* Chạm-để-đặt: ô trống thành đích, viền hairline nhấp nháy một lần rồi giữ sáng nhẹ. */
+.bb-cell-btn[data-targeting='true'] .bb-engrave {
+  border-color: var(--color-ivory-50);
+  animation: bb-pulse 900ms var(--ease-out-expo) 1 both;
+}
+
+@keyframes bb-pulse {
+  0% {
+    box-shadow:
+      inset 0 2px 4px color-mix(in srgb, var(--color-cacao-950) 55%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--color-ivory-50) 70%, transparent);
+  }
+  60% {
+    box-shadow:
+      inset 0 2px 4px color-mix(in srgb, var(--color-cacao-950) 55%, transparent),
+      0 0 0 7px color-mix(in srgb, var(--color-ivory-50) 0%, transparent);
+  }
+  100% {
+    box-shadow:
+      inset 0 2px 4px color-mix(in srgb, var(--color-cacao-950) 55%, transparent),
+      0 1px 0 color-mix(in srgb, var(--color-foil-300) 28%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-cell-btn[data-targeting='true'] .bb-engrave {
+    animation: none;
+  }
+}
+
+/* Kéo-thả: ô đích hợp lệ có viền foil mảnh và vầng sáng nhẹ; ô nguồn mờ đi. */
+.bb-cell-btn[data-over='true']::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 3px;
+  /* Viền foil sáng (token accent) kẹp giữa hai vòng cacao mảnh để nổi trên nền vàng. */
+  border: 2px solid var(--color-accent-bright);
+  box-shadow:
+    inset 0 0 0 1px var(--color-cacao-950),
+    0 0 0 1px var(--color-cacao-950),
+    0 0 12px 2px color-mix(in srgb, var(--color-accent-bright) 55%, transparent);
+  pointer-events: none;
+}
+
+.bb-cell-btn[data-filled='true'] {
+  cursor: grab;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bb-cell-btn[data-dragging='true'] .bb-piece {
+  opacity: 0.3;
+}
+
+/* Viên đang bay theo con trỏ: nhấc nhẹ (scale 1.06) với bóng mềm. */
+.bb-overlay {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  pointer-events: none;
+}
+
+.bb-overlay-img {
+  display: block;
+  width: clamp(4.5rem, 9vw, 6.5rem);
+  height: auto;
+  transform: scale(1.06);
+  filter: drop-shadow(0 10px 12px color-mix(in srgb, var(--color-cacao-950) 70%, transparent));
+}
+
+/*
+ * Mặt trong nắp trong builder chỉ là một dải mỏng (xem LidEdge). Hệ số kéo giãn ngược bù cho độ
+ * nghiêng: nắp dựng ở (tilt1 + lid-max) so với mặt phẳng nhìn nên chiều cao chỉ còn |cos| của nó.
+ */
+.bb-box {
+  --lid-unsquash: calc(-1 / cos(calc(var(--tilt1) + var(--lid-max))));
+}
+
+.bb-lid-line {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 50%;
+  height: 1px;
+  transform: scaleY(var(--lid-unsquash));
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-accent) 75%, transparent) 14%,
+    color-mix(in srgb, var(--color-accent) 75%, transparent) 43%,
+    transparent 43.5%,
+    transparent 56.5%,
+    color-mix(in srgb, var(--color-accent) 75%, transparent) 57%,
+    color-mix(in srgb, var(--color-accent) 75%, transparent) 86%,
+    transparent
+  );
+}
+
+.bb-lid-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--bw) * 0.04);
+  height: calc(var(--bw) * 0.04);
+  translate: -50% -50%;
+  transform: scaleY(var(--lid-unsquash));
+  color: var(--color-accent);
+  opacity: 0.9;
+}
+
+/* Menu nhỏ của ô đã có viên. */
+.bb-menu {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  width: max-content;
+  min-width: 11rem;
+  max-width: calc(100% - 0.5rem);
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+}
+
+.bb-menu[data-above='true'] {
+  transform: translateY(-100%);
+}
+
+.bb-menu-name {
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.bb-menu-price {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.bb-menu-btn {
+  min-height: 2.75rem;
+  margin-top: 0.5rem;
+  padding: 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent-bright);
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--duration-base) var(--ease-out-expo);
+}
+
+.bb-menu-btn-primary {
+  color: var(--color-cacao-900);
+  background: var(--color-accent);
+}
+
+.bb-menu-btn-primary:hover {
+  background: var(--color-accent-bright);
+}
+
+.bb-menu-btn:hover {
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
+/* ---------- Tóm tắt ---------- */
+
+/* Mobile: dính đáy trong phạm vi phần builder (cha là .bb-layout, flex cột). Gọn: ≤ 96px khi thu gọn. */
+.bb-summary-area {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin-inline: calc(-1 * var(--spacing-gutter));
+  padding: 0.375rem var(--spacing-gutter) calc(0.375rem + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--color-ground-deep) 97%, transparent);
+  border-top: 1px solid var(--color-line);
+}
+
+@media (min-width: 64rem) {
+  .bb-summary-area {
+    position: static;
+    margin-inline: 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+  }
+}
+
+.bb-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bb-summary-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.5rem;
+}
+
+.bb-progress,
+.bb-total {
+  margin: 0;
+}
+
+.bb-progress {
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+}
+
+.bb-total {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--color-accent-bright);
+}
+
+.bb-dot {
+  color: var(--color-text-muted);
+}
+
+/* Nhãn đầy đủ chỉ để trình đọc màn hình ở mobile; nhãn ngắn chỉ để nhìn. */
+.bb-progress-long {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Vùng chạm 44px nhưng chỉ chiếm 24px chiều cao: đệm âm lấn vào khoảng trống quanh dòng. */
+.bb-toggle {
+  min-height: 2.75rem;
+  margin-block: -0.625rem;
+  margin-inline-start: auto;
+  padding: 0 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  text-underline-offset: 0.25em;
+}
+
+.bb-toggle:hover {
+  color: var(--color-accent-bright);
+}
+
+.bb-toggle:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.bb-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 63.99rem) {
+  .bb-breakdown[data-open='false'] {
+    display: none;
+  }
+  .bb-breakdown[data-open='true'] {
+    padding-block: 0.25rem 0.125rem;
+  }
+}
+
+.bb-breakdown > div {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.bb-breakdown dt,
+.bb-breakdown dd {
+  margin: 0;
+}
+
+.bb-breakdown dd {
+  color: var(--color-text);
+}
+
+/* Hàng nút: một dòng ở 360px (nhãn ngắn), vùng chạm ≥ 44px. */
+.bb-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.375rem;
+}
+
+.bb-actions button {
+  min-height: 2.75rem;
+  padding-inline: 0.75rem;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.bb-label-long {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .bb-summary {
+    gap: 0.5rem;
+  }
+  .bb-summary-head {
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .bb-dot,
+  .bb-toggle,
+  .bb-progress-short {
+    display: none;
+  }
+  .bb-progress-long {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+  .bb-total {
+    font-size: 1.25rem;
+  }
+  .bb-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+  }
+  .bb-actions button {
+    padding-inline: 1rem;
+  }
+  .bb-actions button:first-child {
+    flex: 1 1 14rem;
+  }
+  .bb-label-long {
+    display: inline;
+  }
+  .bb-label-short {
+    display: none;
+  }
+}
+
+/* Thanh gợi ý "đang cầm": nằm trên đầu khối tóm tắt dính đáy. */
+.bb-hold {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.375rem;
+  padding: 0.25rem 0.25rem 0.375rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
+.bb-hold-text {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.bb-hold-btn {
+  flex: none;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent-bright);
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.bb-hold-btn:hover {
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
+.bb-hold-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Nút nổi "Xem hộp" phía trên thanh dính (chỉ khi hộp ngoài màn hình). */
+.bb-viewbox {
+  position: absolute;
+  right: var(--spacing-gutter);
+  bottom: calc(100% + 0.75rem);
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent-bright);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  box-shadow: var(--shadow-raised);
+  cursor: pointer;
+  animation: bb-viewbox-in var(--duration-base) var(--ease-out-expo) both;
+}
+
+.bb-viewbox:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+@keyframes bb-viewbox-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .bb-viewbox {
+    display: none;
+  }
+}
+
+/* ---------- Khay chọn viên ---------- */
+
+.bt {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bt-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Máy tính bảng (một cột, khay rộng): 4 cột; từ 64rem khay về cột bên phải nên lại 3 cột. */
+@media (min-width: 40rem) {
+  .bt-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .bt-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.bt-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+@media (min-width: 40rem) {
+  .bt-item {
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+}
+
+.bt-item:hover {
+  border-color: var(--color-accent);
+}
+
+/* Đang cầm: viền foil và vầng sáng trong. */
+.bt-item[data-held='true'] {
+  border-color: var(--color-accent-bright);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 70%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.bt-item[data-dragging='true'] {
+  opacity: 0.45;
+}
+
+/* Nút cầm/kéo: phủ cả thẻ (::after) để chạm ở đâu cũng được; tên và "Thêm" nổi lên trên. */
+.bt-hold {
+  display: block;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bt-hold:disabled {
+  cursor: not-allowed;
+}
+
+.bt-hold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.bt-hold:focus-visible {
+  outline: none;
+}
+
+.bt-hold:focus-visible::after {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.bt-media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0.25rem;
+  aspect-ratio: 1;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    color-mix(in srgb, var(--color-cacao-600) 60%, transparent),
+    var(--color-ground-deep)
+  );
+  border-radius: var(--radius-sm);
+}
+
+.bt-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 3px 4px color-mix(in srgb, var(--color-cacao-950) 60%, transparent));
+}
+
+.bt-item[data-unavailable='true'] .bt-media img {
+  opacity: 0.4;
+  filter: grayscale(0.8);
+}
+
+.bt-badge {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  display: grid;
+  min-width: 1.625rem;
+  height: 1.625rem;
+  place-items: center;
+  padding-inline: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-cacao-900);
+  background: var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+
+/* Tên mở chi tiết; nổi lên trên lớp phủ của nút cầm. */
+.bt-name {
+  position: relative;
+  z-index: 1;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.125rem;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  color: var(--color-text);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+@media (min-width: 40rem) {
+  .bt-name {
+    font-size: 0.9375rem;
+  }
+}
+
+.bt-name:hover {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  text-underline-offset: 0.25em;
+}
+
+.bt-name:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.bt-price {
+  margin: 0 0 0.25rem 0.125rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 40rem) {
+  .bt-price {
+    font-size: 0.8125rem;
+  }
+}
+
+.bt-add {
+  position: relative;
+  z-index: 1;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.125rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--ease-out-expo),
+    color var(--duration-base) var(--ease-out-expo),
+    transform var(--duration-fast) var(--ease-out-expo);
+}
+
+@media (min-width: 40rem) {
+  .bt-add {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+}
+
+.bt-add:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.bt-add:hover:not(:disabled) {
+  color: var(--color-accent-bright);
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  transform: translateY(-1px);
+}
+
+.bt-add:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.bt-add:disabled {
+  color: var(--color-text-muted);
+  border-color: var(--color-line);
+  cursor: not-allowed;
+}
+
+/* Gợi ý thả: chỉ hiện khi đang kéo một viên từ hộp ra. */
+.bt-drop-hint {
+  display: none;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-accent);
+}
+
+.bb-tray-area[data-armed='true'] .bt-drop-hint {
+  display: block;
+}
+
+.bb-tray-area[data-armed='true'] #tray-hint {
+  display: none;
+}
+
+.bb-tray-area {
+  border-radius: var(--radius-md);
+  transition: box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+.bb-tray-area[data-over='true'] {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 70%, transparent);
+}
+
+/* ---------- Chi tiết viên ---------- */
+
+.bt-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .bt-details {
+    flex-direction: row;
+    gap: 1.75rem;
+    padding: 2rem;
+  }
+}
+
+.bt-details-media {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 9rem;
+  align-self: center;
+  padding: 0.75rem;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    color-mix(in srgb, var(--color-cacao-600) 60%, transparent),
+    var(--color-ground-deep)
+  );
+  border-radius: var(--radius-sm);
+}
+
+.bt-details-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bt-details-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bt-details-body .bt-price {
+  margin: 0;
+  font-size: 0.9375rem;
+}

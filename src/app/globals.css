@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+@import '../styles/tokens/tokens.css';
+@import '../styles/tokens/roles.css';
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: var(--color-ground-deep);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-surface-raised) var(--color-ground-deep);
+  }
+
+  body {
+    background-color: var(--color-ground);
+    background-image: var(--texture-grain);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    letter-spacing: var(--text-body--letter-spacing);
+    caret-color: var(--color-accent);
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-cacao-900);
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: var(--color-accent);
+  }
+
+  ::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+
+  a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  /* Scrollbar WebKit/Blink: mảnh, thumb cacao-700 trên nền cacao-950. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ground-deep);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-surface-raised);
+    border: 2px solid var(--color-ground-deep);
+    border-radius: var(--radius-sm);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-line);
+  }
+
+  /* Tôn trọng prefers-reduced-motion: chuyển tiếp CSS gần như tức thì. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

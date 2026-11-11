@@ -1,0 +1,208 @@
+/* Thanh đầu trang, liên kết bỏ qua, chân trang. Màu và khoảng cách từ token. */
+
+:root {
+  --site-header-h: 4rem;
+}
+
+html {
+  scroll-padding-top: calc(var(--site-header-h) + 0.5rem);
+}
+
+.site-skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--color-ground-deep);
+  background: var(--color-accent-bright);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.site-skip:focus-visible {
+  transform: none;
+  outline: 2px solid var(--color-ground-deep);
+  outline-offset: 2px;
+}
+
+/* Mốc ở đỉnh trang cho IntersectionObserver. */
+.site-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  height: var(--site-header-h);
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-out-expo);
+}
+
+.site-header[data-solid='true'] {
+  background-color: var(--color-ground-deep);
+  border-bottom-color: var(--color-line);
+}
+
+.site-header-inner {
+  display: flex;
+  height: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-logo {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  text-decoration: none;
+}
+
+.site-nav,
+.site-footer-links {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav {
+  gap: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .site-nav {
+    gap: 2rem;
+  }
+}
+
+/* Liên kết: chữ foil, gạch chân mờ vẽ đậm từ trái sang phải khi hover. */
+.site-link {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--duration-base) var(--ease-out-expo);
+}
+
+@media (min-width: 40rem) {
+  .site-link {
+    font-size: 0.9375rem;
+  }
+}
+
+.site-link::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0.5rem;
+  height: 1px;
+  background: var(--color-accent-bright);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.site-link:hover {
+  color: var(--color-accent-bright);
+}
+
+.site-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Chân trang ---------- */
+
+.site-footer {
+  padding-block: 3rem 2.5rem;
+  background-color: var(--color-ground-deep);
+}
+
+.site-footer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.site-footer-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.site-footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.site-footer-links {
+  flex-direction: column;
+  gap: 0;
+}
+
+.site-footer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+@media (min-width: 48rem) {
+  .site-footer-grid {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .site-footer-meta {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+}
+
+/* ---------- Trang 404 ---------- */
+
+.nf {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: calc(var(--site-header-h) + 2rem) 0 var(--spacing-section);
+  text-align: center;
+}
+
+.nf-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.nf-art {
+  width: min(32rem, 100%);
+  height: auto;
+  color: var(--color-accent);
+  --foil-w: 1.1px;
+  opacity: 0.9;
+}

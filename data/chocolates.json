@@ -1,0 +1,134 @@
+[
+  {
+    "id": "01",
+    "name": "Chocolate 01",
+    "price": 35000,
+    "image": "/chocolates/01.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "02",
+    "name": "Chocolate 02",
+    "price": 40000,
+    "image": "/chocolates/02.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 2
+  },
+  {
+    "id": "03",
+    "name": "Chocolate 03",
+    "price": 45000,
+    "image": "/chocolates/03.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 3
+  },
+  {
+    "id": "04",
+    "name": "Chocolate 04",
+    "price": 50000,
+    "image": "/chocolates/04.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 4
+  },
+  {
+    "id": "05",
+    "name": "Chocolate 05",
+    "price": 55000,
+    "image": "/chocolates/05.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 5
+  },
+  {
+    "id": "06",
+    "name": "Chocolate 06",
+    "price": 60000,
+    "image": "/chocolates/06.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 6
+  },
+  {
+    "id": "07",
+    "name": "Chocolate 07",
+    "price": 35000,
+    "image": "/chocolates/07.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 7
+  },
+  {
+    "id": "08",
+    "name": "Chocolate 08",
+    "price": 40000,
+    "image": "/chocolates/08.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 8
+  },
+  {
+    "id": "09",
+    "name": "Chocolate 09",
+    "price": 45000,
+    "image": "/chocolates/09.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 9
+  },
+  {
+    "id": "10",
+    "name": "Chocolate 10",
+    "price": 50000,
+    "image": "/chocolates/10.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 10
+  },
+  {
+    "id": "11",
+    "name": "Chocolate 11",
+    "price": 55000,
+    "image": "/chocolates/11.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 11
+  },
+  {
+    "id": "12",
+    "name": "Chocolate 12",
+    "price": 60000,
+    "image": "/chocolates/12.svg",
+    "description": "Mô tả tạm, chờ thông tin từ Kinh Thành.",
+    "flavorNotes": [],
+    "allergens": null,
+    "available": true,
+    "sortOrder": 12
+  }
+]
