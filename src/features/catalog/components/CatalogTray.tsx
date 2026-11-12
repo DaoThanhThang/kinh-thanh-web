@@ -1,11 +1,13 @@
 'use client';
 
+import { useRef } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Heading, Text } from '@/components/ui';
 import type { Chocolate } from '@/lib/schemas/chocolate';
 import { formatVnd } from '@/lib/utils/formatVnd';
 import { builder as t } from '@/content/builder';
 import { ChocolateImage } from './ChocolateImage';
+import { useScrollEdgeAttrs, useTrayScrollMode } from './useTrayScroll';
 
 type Props = {
   chocolates: readonly Chocolate[];
@@ -119,8 +121,14 @@ function TrayCard({
 
 /** Khay chọn viên: thẻ là nguồn kéo-thả; chạm thẻ để cầm viên; "Thêm" đặt vào ô trống đầu tiên. */
 export function CatalogTray({ chocolates, counts, full, heldId, ...rest }: Props) {
+  // Từ 64rem: khay cao bằng cột hộp, danh sách cuộn bên trong (D68). Dưới đó giữ luồng trang.
+  const scrollMode = useTrayScrollMode();
+  const hostRef = useRef<HTMLElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  useScrollEdgeAttrs(scrollerRef, hostRef, scrollMode);
+
   return (
-    <section className="bt" aria-labelledby="tray-heading">
+    <section ref={hostRef} className="bt" aria-labelledby="tray-heading">
       <div className="bt-head">
         <Heading as="h3" id="tray-heading">
           {t.trayHeading}
@@ -131,19 +139,28 @@ export function CatalogTray({ chocolates, counts, full, heldId, ...rest }: Props
         <p className="bt-drop-hint" aria-hidden="true">
           {t.trayDropHint}
         </p>
+        {scrollMode ? (
+          <p className="bt-scroll-hint tabular">{t.trayScrollHint(chocolates.length)}</p>
+        ) : null}
       </div>
-      <ul className="bt-grid">
-        {chocolates.map((c) => (
-          <TrayCard
-            key={c.id}
-            c={c}
-            count={counts[c.id] ?? 0}
-            full={full}
-            held={heldId === c.id}
-            {...rest}
-          />
-        ))}
-      </ul>
+      <div
+        ref={scrollerRef}
+        className="bt-scroll"
+        data-tray-scroll={scrollMode ? 'true' : undefined}
+      >
+        <ul className="bt-grid">
+          {chocolates.map((c) => (
+            <TrayCard
+              key={c.id}
+              c={c}
+              count={counts[c.id] ?? 0}
+              full={full}
+              held={heldId === c.id}
+              {...rest}
+            />
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

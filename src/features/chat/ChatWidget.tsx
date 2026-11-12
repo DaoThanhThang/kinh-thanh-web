@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { chat as t } from '@/content/chat';
 import type { ChatStatus } from '@/lib/chat/types';
+import { OPEN_CHAT_EVENT, setChatAvailable } from './open-chat';
 import './launcher.css';
 
 // Mã khung chat chỉ tải khi mở lần đầu: nút nổi chỉ vài trăm byte và không chặn LCP/cuộn.
@@ -74,6 +75,23 @@ export function ChatWidget() {
       root.style.removeProperty('--chat-launcher-shift');
       root.style.removeProperty('--chat-launcher-lift');
     };
+  }, [visible]);
+
+  // Báo cho nơi khác (nút "Hỏi trợ lý" ở /thong-tin) biết trợ lý có bật không.
+  useEffect(() => {
+    setChatAvailable(visible);
+    return () => setChatAvailable(false);
+  }, [visible]);
+
+  // Nơi khác yêu cầu mở khung qua sự kiện window.
+  useEffect(() => {
+    if (!visible) return;
+    const onOpen = () => {
+      setLoaded(true);
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_CHAT_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_CHAT_EVENT, onOpen);
   }, [visible]);
 
   // Đóng khung thì trả focus về nút nổi.

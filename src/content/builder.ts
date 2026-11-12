@@ -86,6 +86,7 @@ export const builder = {
 
   trayHeading: 'Khay chọn viên',
   trayHint: 'Một loại có thể chọn nhiều viên.',
+  trayScrollHint: (n: number) => `${n} viên · cuộn để xem thêm`,
   trayAdd: 'Thêm',
   trayAddLabel: (name: string) => `Thêm ${name} vào hộp`,
   trayUnavailable: 'Tạm hết',

@@ -36,10 +36,42 @@ export const storeInfoSchema = z.object({
     leadTime: text,
     fee: text,
     packaging: text,
+    /** Các bước từ đặt hàng đến nhận hàng (trang /thong-tin vẽ thành đường quy trình). */
+    steps: z.array(z.object({ title: nonEmpty, text: text.default('') })).default([]),
+    /** Thời gian giao theo khu vực (bảng trên /thong-tin). */
+    zones: z
+      .array(z.object({ area: nonEmpty, leadTime: nonEmpty, note: text.default('') }))
+      .default([]),
   }),
-  returns: z.object({ policy: text }),
-  storage: z.object({ tips: z.array(nonEmpty) }),
-  faq: z.array(z.object({ question: nonEmpty, answer: nonEmpty })),
+  returns: z.object({
+    /** Tóm tắt một đoạn (chatbot và nơi không đủ chỗ cho danh sách). */
+    policy: text,
+    eligible: z.array(nonEmpty).default([]),
+    howTo: z.array(nonEmpty).default([]),
+    exclusions: z.array(nonEmpty).default([]),
+  }),
+  storage: z.object({
+    tips: z.array(nonEmpty),
+    /** Khoảng nhiệt độ khuyên dùng (°C), dùng vẽ thang đo. */
+    range: z
+      .object({ min: z.number(), max: z.number() })
+      .refine((r) => r.min < r.max, { message: 'range.min phải nhỏ hơn range.max' })
+      .default({ min: 16, max: 18 }),
+    /** Câu ghi chú thời gian dùng ngon nhất, ví dụ "Ngon nhất trong 2–3 tuần". */
+    shelfLife: text.default(''),
+    do: z.array(nonEmpty).default([]),
+    avoid: z.array(nonEmpty).default([]),
+    /** Gợi ý thưởng thức (chung, không nêu công dụng sức khoẻ). */
+    enjoy: z.array(nonEmpty).default([]),
+  }),
+  faq: z.array(
+    z.object({
+      question: nonEmpty,
+      answer: nonEmpty,
+      /** Tên nhóm hiển thị; bỏ trống thì câu hỏi nằm ở nhóm cuối không tiêu đề. */
+      group: text.default(''),
+    }),
+  ),
 });
 
 export type StoreInfo = z.infer<typeof storeInfoSchema>;

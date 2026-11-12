@@ -34,6 +34,21 @@ describe('buildSystemPrompt', () => {
     expect(p).toContain('suggest_box');
   });
 
+  it('đưa dữ liệu thông tin mở rộng của cửa hàng vào prompt', () => {
+    const p = prompt(false);
+    expect(p).toContain(`Hỏi (${STORE.faq[0]?.group}): ${STORE.faq[0]?.question}`);
+    for (const f of STORE.faq) expect(p).toContain(f.question);
+    for (const z of STORE.shipping.zones) expect(p).toContain(`Giao tới ${z.area}`);
+    expect(p).toContain('Quy trình giao hàng: 1. Đặt hàng');
+    expect(p).toContain(`Được đổi hoặc hoàn tiền khi: ${STORE.returns.eligible[0]}`);
+    expect(p).toContain(`Cách báo khi cần đổi trả: ${STORE.returns.howTo[0]}`);
+    expect(p).toContain(`Không áp dụng đổi trả khi: ${STORE.returns.exclusions[0]}`);
+    expect(p).toContain(`Bảo quản, nên: ${STORE.storage.do[0]}`);
+    expect(p).toContain(`Bảo quản, tránh: ${STORE.storage.avoid[0]}`);
+    expect(p).toContain(`Thời gian dùng ngon nhất: ${STORE.storage.shelfLife}`);
+    expect(p).toContain(`Gợi ý thưởng thức: ${STORE.storage.enjoy[0]}`);
+  });
+
   it('placeholder=true thêm câu xác nhận lại với cửa hàng; false thì không', () => {
     expect(prompt(true)).toContain(
       'Thông tin này đang được cập nhật, bạn vui lòng xác nhận lại với cửa hàng.',

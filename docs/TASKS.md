@@ -25,4 +25,6 @@ Trạng thái: ⬜ chưa làm · 🔄 đang làm · ⏳ chờ duyệt · ✅ xon
 | T17 | Sửa neo "Đặt hàng ngay", menu điều hướng (desktop + mobile), thông tin cửa hàng tạm, trang /lien-he và /thong-tin (D52–D55) | ✅ |
 | T18 | Chatbot tư vấn (Haiku 5.5): `/api/chat` stream + tool `suggest_box`, widget lazy, chế độ thử, README chi phí (D59–D63) | ✅ |
 | T19 | Nhận đơn qua email: `/api/order`, ảnh khay PNG, email shop + khách, chống lạm dụng (D56–D58) | ✅ |
-| R2 | Sửa đổi 2 của khách: bỏ Đăng nhập, menu phẳng 6 mục (bỏ "Khác"), chân trang căn giữa đối xứng, nền hero art "thành đứng yên, vòng và chim xoay" (D64–D67) | ⏳ |
+| R2 | Sửa đổi 2 của khách: bỏ Đăng nhập, menu phẳng 6 mục (bỏ "Khác"), chân trang căn giữa đối xứng, nền hero art "thành đứng yên, vòng và chim xoay" (D64–D67) | ✅ |
+| R3 | Sửa đổi 3 của khách: khay chọn viên cao bằng cột hộp (≥ 64rem), danh sách cuộn bên trong, mép mờ + gợi ý số viên; mobile giữ luồng cũ (D68–D71) | ✅ |
+| R4 | Sửa đổi 4 của khách: trang /thong-tin đầy hơn, mục lục dính + 4 mục bố cục khác nhau + dải kết, dữ liệu mở rộng, mở chat từ trang (D72–D75) | ✅ |

@@ -51,9 +51,23 @@ function storeLines(info: StoreInfo): string {
   add('Thời gian giao', info.shipping.leadTime);
   add('Phí giao hàng', info.shipping.fee);
   add('Đóng gói', info.shipping.packaging);
-  add('Đổi trả', info.returns.policy);
-  add('Bảo quản', info.storage.tips.join(' '));
-  for (const f of info.faq) lines.push(`- Hỏi: ${f.question} Đáp: ${f.answer}`);
+  const { shipping, returns, storage } = info;
+  add('Quy trình giao hàng', shipping.steps.map((s, i) => `${i + 1}. ${s.title}`).join('; '));
+  for (const z of shipping.zones) {
+    add(`Giao tới ${z.area}`, [z.leadTime, z.note].filter(Boolean).join('. '));
+  }
+  add('Đổi trả', returns.policy);
+  add('Được đổi hoặc hoàn tiền khi', returns.eligible.join('; '));
+  add('Cách báo khi cần đổi trả', returns.howTo.join('; '));
+  add('Không áp dụng đổi trả khi', returns.exclusions.join('; '));
+  add('Bảo quản', storage.tips.join(' '));
+  add('Bảo quản, nên', storage.do.join('; '));
+  add('Bảo quản, tránh', storage.avoid.join('; '));
+  add('Thời gian dùng ngon nhất', storage.shelfLife);
+  add('Gợi ý thưởng thức', storage.enjoy.join('; '));
+  for (const f of info.faq) {
+    lines.push(`- Hỏi${f.group ? ` (${f.group})` : ''}: ${f.question} Đáp: ${f.answer}`);
+  }
   return lines.join('\n');
 }
 

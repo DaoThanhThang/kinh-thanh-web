@@ -4,9 +4,9 @@ import { storeInfoSchema, type StoreInfo } from '@/lib/schemas/store-info';
 export const EMPTY_STORE_INFO: StoreInfo = {
   placeholder: true,
   contact: { phone: '', email: '', address: '', hours: '', zalo: '', facebook: '' },
-  shipping: { areas: [], leadTime: '', fee: '', packaging: '' },
-  returns: { policy: '' },
-  storage: { tips: [] },
+  shipping: { areas: [], leadTime: '', fee: '', packaging: '', steps: [], zones: [] },
+  returns: { policy: '', eligible: [], howTo: [], exclusions: [] },
+  storage: { tips: [], range: { min: 16, max: 18 }, shelfLife: '', do: [], avoid: [], enjoy: [] },
   faq: [],
 };
 

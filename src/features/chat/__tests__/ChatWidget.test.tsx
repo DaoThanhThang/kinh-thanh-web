@@ -4,6 +4,7 @@ import { chat } from '@/content/chat';
 import { useBoxStore } from '@/features/box-builder';
 import type { ChatEvent, ChatSuggestion } from '@/lib/chat/types';
 import { ChatWidget } from '../ChatWidget';
+import { OPEN_CHAT_EVENT, openChat, useChatAvailable } from '../open-chat';
 import { CHAT_STORAGE_KEY } from '../storage';
 
 /** Mô phỏng tối thiểu thao tác người dùng (không thêm thư viện user-event). */
@@ -404,5 +405,53 @@ describe('ChatWidget: thẻ gợi ý', () => {
       size: 6,
       filledIds: ['02', '04'],
     });
+  });
+});
+
+describe('ChatWidget: mở từ nơi khác qua sự kiện window', () => {
+  function Probe() {
+    return <span data-testid="avail">{String(useChatAvailable())}</span>;
+  }
+
+  it('openChat() phát sự kiện kt:open-chat và mở khung', async () => {
+    const seen = vi.fn();
+    window.addEventListener(OPEN_CHAT_EVENT, seen);
+    render(<ChatWidget />);
+    const launcher = await screen.findByRole('button', { name: chat.launcherLabel });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    await act(async () => {
+      openChat();
+    });
+    expect(seen).toHaveBeenCalledOnce();
+    expect(await screen.findByRole('dialog', { name: chat.panelTitle })).toBeInTheDocument();
+    expect(launcher).toHaveAttribute('aria-expanded', 'true');
+    window.removeEventListener(OPEN_CHAT_EVENT, seen);
+  });
+
+  it('trợ lý tắt: sự kiện không mở gì và useChatAvailable = false', async () => {
+    mockFetch({ enabled: false, mode: 'live' });
+    render(
+      <>
+        <ChatWidget />
+        <Probe />
+      </>,
+    );
+    await act(async () => {});
+    await act(async () => {
+      openChat();
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByTestId('avail')).toHaveTextContent('false');
+  });
+
+  it('trợ lý bật: useChatAvailable chuyển true khi nút nổi hiện', async () => {
+    render(
+      <>
+        <ChatWidget />
+        <Probe />
+      </>,
+    );
+    await screen.findByRole('button', { name: chat.launcherLabel });
+    expect(screen.getByTestId('avail')).toHaveTextContent('true');
   });
 });

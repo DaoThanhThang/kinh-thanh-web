@@ -12,10 +12,60 @@
     "areas": ["Nội thành Hà Nội", "TP. Hồ Chí Minh", "Các tỉnh thành khác trên toàn quốc"],
     "leadTime": "Nội thành Hà Nội và TP.HCM: 1–2 ngày; tỉnh thành khác: 2–4 ngày.",
     "fee": "Phí giao hàng tính theo khu vực và được báo khi Kinh Thành xác nhận đơn, trước khi bạn thanh toán.",
-    "packaging": "Hộp được bọc kín và đặt trong túi giữ nhiệt kèm túi giữ mát khi trời nóng, để chocolate đến nơi vẫn nguyên hình."
+    "packaging": "Hộp được bọc kín và đặt trong túi giữ nhiệt kèm túi giữ mát khi trời nóng, để chocolate đến nơi vẫn nguyên hình.",
+    "steps": [
+      {
+        "title": "Đặt hàng",
+        "text": "Bạn xếp hộp, viết lời nhắn và gửi đơn ngay trên trang."
+      },
+      {
+        "title": "Xác nhận qua điện thoại hoặc Zalo",
+        "text": "Kinh Thành liên hệ để chốt đơn, ngày nhận và phí giao trước khi bạn thanh toán."
+      },
+      {
+        "title": "Đóng gói giữ nhiệt",
+        "text": "Hộp được bọc kín, đặt trong túi giữ nhiệt, thêm túi giữ mát khi trời nóng."
+      },
+      {
+        "title": "Giao tận tay",
+        "text": "Đơn vị vận chuyển giao hộp tới người nhận theo địa chỉ và ngày đã xác nhận."
+      }
+    ],
+    "zones": [
+      {
+        "area": "Nội thành Hà Nội",
+        "leadTime": "1–2 ngày",
+        "note": "Có thể giao nhanh trong ngày, cần xác nhận trước."
+      },
+      {
+        "area": "TP. Hồ Chí Minh",
+        "leadTime": "1–2 ngày",
+        "note": "Có thể giao nhanh trong ngày, cần xác nhận trước."
+      },
+      {
+        "area": "Các tỉnh thành khác",
+        "leadTime": "2–4 ngày",
+        "note": "Thời gian cụ thể báo khi xác nhận đơn."
+      }
+    ]
   },
   "returns": {
-    "policy": "Nếu hộp bị móp, vỡ hoặc có viên không đúng với đơn đã xác nhận, hãy chụp ảnh và nhắn cho Kinh Thành trong ngày nhận hàng. Kinh Thành sẽ đổi hộp hoặc hoàn tiền phần bị ảnh hưởng. Vì là thực phẩm, hộp đã mở và đã dùng không áp dụng đổi trả."
+    "policy": "Nếu hộp bị móp, vỡ hoặc có viên không đúng với đơn đã xác nhận, hãy chụp ảnh và nhắn cho Kinh Thành trong ngày nhận hàng. Kinh Thành sẽ đổi hộp hoặc hoàn tiền phần bị ảnh hưởng. Vì là thực phẩm, hộp đã mở và đã dùng không áp dụng đổi trả.",
+    "eligible": [
+      "Hộp bị móp, rách hoặc dập khi đến tay bạn.",
+      "Chocolate bị vỡ, mẻ hoặc biến dạng trong quá trình vận chuyển.",
+      "Viên trong hộp không đúng với đơn đã xác nhận."
+    ],
+    "howTo": [
+      "Chụp ảnh hộp và các viên bị ảnh hưởng.",
+      "Nhắn Zalo hoặc gọi cho Kinh Thành trong ngày nhận hàng.",
+      "Kinh Thành xác nhận, rồi đổi hộp hoặc hoàn tiền phần bị ảnh hưởng."
+    ],
+    "exclusions": [
+      "Hộp đã mở và đã dùng, vì là thực phẩm.",
+      "Chocolate bị chảy hoặc đổi dáng do bảo quản chưa đúng cách sau khi nhận.",
+      "Báo sau ngày nhận hàng hoặc không có ảnh kèm theo."
+    ]
   },
   "storage": {
     "tips": [
@@ -23,36 +73,98 @@
       "Tránh ánh nắng trực tiếp và nơi gần bếp, lò nướng.",
       "Không cần để tủ lạnh. Chỉ khi trời nóng, bọc kín hộp rồi cất ngăn mát và để ngoài khoảng một giờ trước khi thưởng thức.",
       "Chocolate ngon nhất khi dùng trong 2–3 tuần kể từ ngày nhận."
+    ],
+    "range": {
+      "min": 16,
+      "max": 18
+    },
+    "shelfLife": "Ngon nhất trong 2–3 tuần kể từ ngày nhận.",
+    "do": [
+      "Để nơi khô ráo, thoáng mát, quanh 16–18°C.",
+      "Giữ hộp đóng kín, đặt phẳng.",
+      "Khi trời nóng: bọc kín hộp rồi cất ngăn mát tủ lạnh."
+    ],
+    "avoid": [
+      "Ánh nắng trực tiếp, cửa sổ nắng, trong xe đỗ ngoài trời.",
+      "Gần bếp, lò nướng hoặc nguồn nhiệt.",
+      "Để hộp mở cạnh thực phẩm có mùi mạnh."
+    ],
+    "enjoy": [
+      "Nếu cất ngăn mát, để hộp ở nhiệt độ phòng 15–20 phút trước khi ăn.",
+      "Thử từ viên vị nhẹ đến viên vị đậm để vị sau không át vị trước.",
+      "Uống kèm nước lọc hoặc trà không đường để cảm vị rõ hơn."
     ]
   },
   "faq": [
     {
       "question": "Tôi nên đặt trước bao lâu?",
-      "answer": "Bạn nên đặt trước ít nhất 2–3 ngày. Dịp lễ, Tết hoặc khi cần giao đúng ngày, hãy đặt sớm hơn và ghi ngày nhận mong muốn trong đơn."
+      "answer": "Bạn nên đặt trước ít nhất 2–3 ngày. Dịp lễ, Tết hoặc khi cần giao đúng ngày, hãy đặt sớm hơn và ghi ngày nhận mong muốn trong đơn.",
+      "group": "Đặt hàng"
     },
     {
-      "question": "Có giao hoả tốc không?",
-      "answer": "Với nội thành Hà Nội và TP.HCM, Kinh Thành có thể sắp xếp giao nhanh trong ngày tuỳ số lượng đơn. Hãy gọi hoặc nhắn Zalo trước khi đặt để được xác nhận."
+      "question": "Đặt số lượng lớn hoặc làm quà doanh nghiệp, có in thiệp riêng được không?",
+      "answer": "Có thể. Với đơn nhiều hộp, hãy nhắn Zalo hoặc gọi Kinh Thành trước để trao đổi số lượng, nội dung thiệp cho từng hộp hoặc thiệp chung, và thời gian chuẩn bị.",
+      "group": "Đặt hàng"
     },
     {
-      "question": "Có xuất hoá đơn không?",
-      "answer": "Có. Bạn ghi chú nhu cầu xuất hoá đơn trong phần ghi chú của đơn, hoặc nhắn cho Kinh Thành cùng thông tin xuất hoá đơn."
+      "question": "Tôi có thể đổi viên, sửa lời nhắn hoặc huỷ đơn sau khi đặt không?",
+      "answer": "Được, nếu đơn chưa được xác nhận và đóng gói. Hãy nhắn Zalo hoặc gọi Kinh Thành càng sớm càng tốt kèm nội dung cần đổi. Khi hộp đã đóng gói, Kinh Thành sẽ báo lại khả năng thay đổi.",
+      "group": "Đặt hàng"
     },
     {
       "question": "Tôi có thể chọn nhiều viên cùng một loại không?",
-      "answer": "Được. Một loại có thể chọn nhiều viên, bạn xếp hộp theo ý mình."
+      "answer": "Được. Một loại có thể chọn nhiều viên, bạn xếp hộp theo ý mình.",
+      "group": "Hộp & thiệp"
     },
     {
       "question": "Thiệp viết tay hay in?",
-      "answer": "Lời nhắn của bạn (tối đa 150 ký tự) được in lên thiệp nhỏ đặt trong hộp."
+      "answer": "Lời nhắn của bạn (tối đa 150 ký tự) được in lên thiệp nhỏ đặt trong hộp.",
+      "group": "Hộp & thiệp"
     },
     {
-      "question": "Thanh toán như thế nào?",
-      "answer": "Bạn có thể thanh toán khi nhận hàng (COD) hoặc chuyển khoản. Với chuyển khoản, Kinh Thành sẽ gửi hướng dẫn sau khi xác nhận đơn."
+      "question": "Hộp có kèm túi quà không?",
+      "answer": "Hộp được giao trong túi giữ nhiệt để bảo vệ chocolate. Túi quà đi kèm đang được cập nhật, bạn có thể hỏi Kinh Thành khi xác nhận đơn.",
+      "group": "Hộp & thiệp"
+    },
+    {
+      "question": "Chocolate có phù hợp cho trẻ em hoặc người ăn kiêng không?",
+      "answer": "Thông tin thành phần của từng viên đang được cập nhật nên Kinh Thành chưa thể tư vấn chắc chắn. Nếu người nhận là trẻ nhỏ hoặc có chế độ ăn riêng, hãy liên hệ cửa hàng trước khi đặt.",
+      "group": "Hộp & thiệp"
     },
     {
       "question": "Tôi bị dị ứng thì cần lưu ý gì?",
-      "answer": "Thông tin chất gây dị ứng của từng viên đang được cập nhật. Nếu bạn hoặc người nhận có dị ứng, hãy liên hệ Kinh Thành trước khi đặt."
+      "answer": "Thông tin chất gây dị ứng của từng viên đang được cập nhật. Nếu bạn hoặc người nhận có dị ứng, hãy liên hệ Kinh Thành trước khi đặt.",
+      "group": "Hộp & thiệp"
+    },
+    {
+      "question": "Có giao hoả tốc không?",
+      "answer": "Với nội thành Hà Nội và TP.HCM, Kinh Thành có thể sắp xếp giao nhanh trong ngày tuỳ số lượng đơn. Hãy gọi hoặc nhắn Zalo trước khi đặt để được xác nhận.",
+      "group": "Giao nhận"
+    },
+    {
+      "question": "Tôi muốn giao thẳng tới người nhận và không kèm hoá đơn ghi giá trong hộp, được không?",
+      "answer": "Được. Bạn điền địa chỉ và số điện thoại người nhận ở bước đặt hàng, đồng thời ghi chú không kèm hoá đơn hoặc phiếu giá. Kinh Thành sẽ đóng gói đúng theo ghi chú.",
+      "group": "Giao nhận"
+    },
+    {
+      "question": "Mùa hè giao chocolate có bị chảy không?",
+      "answer": "Kinh Thành đóng hộp trong túi giữ nhiệt và thêm túi giữ mát khi trời nóng. Bạn nên có người nhận hàng đúng ngày hẹn và cất hộp nơi mát ngay khi nhận.",
+      "group": "Giao nhận"
+    },
+    {
+      "question": "Có giao ra nước ngoài không?",
+      "answer": "Hiện Kinh Thành chỉ giao trong nước. Nếu có nhu cầu gửi ra nước ngoài, bạn nhắn cho cửa hàng để được báo khi có thay đổi.",
+      "group": "Giao nhận"
+    },
+    {
+      "question": "Thanh toán như thế nào?",
+      "answer": "Bạn có thể thanh toán khi nhận hàng (COD) hoặc chuyển khoản. Với chuyển khoản, Kinh Thành sẽ gửi hướng dẫn sau khi xác nhận đơn.",
+      "group": "Thanh toán"
+    },
+    {
+      "question": "Có xuất hoá đơn không?",
+      "answer": "Có. Bạn ghi chú nhu cầu xuất hoá đơn trong phần ghi chú của đơn, hoặc nhắn cho Kinh Thành cùng thông tin xuất hoá đơn.",
+      "group": "Thanh toán"
     }
   ]
 }
