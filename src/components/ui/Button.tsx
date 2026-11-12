@@ -75,7 +75,7 @@ function Spinner() {
 }
 
 /**
- * Nút hành động. Có `href` thì hiển thị như liên kết (next/link), ngược lại là `<button>`.
+ * Nút hành động. Có `href` thì hiển thị như liên kết (next/link, riêng neo `#id` là <a> thường), ngược lại là `<button>`.
  * Không gắn handler nội bộ nên dùng được trong Server Component. Trạng thái: hover (bước lên 1px), active (nhấn xuống), disabled, loading, focus-visible.
  */
 export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
@@ -104,8 +104,10 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     if (props.href !== undefined) {
       const { href, disabled, onClick, ...anchor } = rest as Omit<AsLink, keyof CommonProps>;
       const inert = Boolean(disabled) || loading;
+      // Neo trong trang (#id): thẻ <a> thường, không qua router; HashScroll lo việc cuộn.
+      const Anchor = href.startsWith('#') ? 'a' : Link;
       return (
-        <Link
+        <Anchor
           {...anchor}
           ref={ref as React.Ref<HTMLAnchorElement>}
           href={href}
@@ -116,7 +118,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
           onClick={inert ? undefined : onClick}
         >
           {content}
-        </Link>
+        </Anchor>
       );
     }
 

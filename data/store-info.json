@@ -1,0 +1,58 @@
+{
+  "placeholder": true,
+  "contact": {
+    "phone": "0900 000 000",
+    "email": "lienhe@kinhthanh.example",
+    "address": "Hà Nội, Việt Nam (địa chỉ cửa hàng đang cập nhật)",
+    "hours": "8:00 – 21:00, Thứ Hai – Chủ Nhật",
+    "zalo": "0900 000 000",
+    "facebook": ""
+  },
+  "shipping": {
+    "areas": ["Nội thành Hà Nội", "TP. Hồ Chí Minh", "Các tỉnh thành khác trên toàn quốc"],
+    "leadTime": "Nội thành Hà Nội và TP.HCM: 1–2 ngày; tỉnh thành khác: 2–4 ngày.",
+    "fee": "Phí giao hàng tính theo khu vực và được báo khi Kinh Thành xác nhận đơn, trước khi bạn thanh toán.",
+    "packaging": "Hộp được bọc kín và đặt trong túi giữ nhiệt kèm túi giữ mát khi trời nóng, để chocolate đến nơi vẫn nguyên hình."
+  },
+  "returns": {
+    "policy": "Nếu hộp bị móp, vỡ hoặc có viên không đúng với đơn đã xác nhận, hãy chụp ảnh và nhắn cho Kinh Thành trong ngày nhận hàng. Kinh Thành sẽ đổi hộp hoặc hoàn tiền phần bị ảnh hưởng. Vì là thực phẩm, hộp đã mở và đã dùng không áp dụng đổi trả."
+  },
+  "storage": {
+    "tips": [
+      "Giữ chocolate ở nhiệt độ 16–18°C, nơi khô ráo và thoáng mát.",
+      "Tránh ánh nắng trực tiếp và nơi gần bếp, lò nướng.",
+      "Không cần để tủ lạnh. Chỉ khi trời nóng, bọc kín hộp rồi cất ngăn mát và để ngoài khoảng một giờ trước khi thưởng thức.",
+      "Chocolate ngon nhất khi dùng trong 2–3 tuần kể từ ngày nhận."
+    ]
+  },
+  "faq": [
+    {
+      "question": "Tôi nên đặt trước bao lâu?",
+      "answer": "Bạn nên đặt trước ít nhất 2–3 ngày. Dịp lễ, Tết hoặc khi cần giao đúng ngày, hãy đặt sớm hơn và ghi ngày nhận mong muốn trong đơn."
+    },
+    {
+      "question": "Có giao hoả tốc không?",
+      "answer": "Với nội thành Hà Nội và TP.HCM, Kinh Thành có thể sắp xếp giao nhanh trong ngày tuỳ số lượng đơn. Hãy gọi hoặc nhắn Zalo trước khi đặt để được xác nhận."
+    },
+    {
+      "question": "Có xuất hoá đơn không?",
+      "answer": "Có. Bạn ghi chú nhu cầu xuất hoá đơn trong phần ghi chú của đơn, hoặc nhắn cho Kinh Thành cùng thông tin xuất hoá đơn."
+    },
+    {
+      "question": "Tôi có thể chọn nhiều viên cùng một loại không?",
+      "answer": "Được. Một loại có thể chọn nhiều viên, bạn xếp hộp theo ý mình."
+    },
+    {
+      "question": "Thiệp viết tay hay in?",
+      "answer": "Lời nhắn của bạn (tối đa 150 ký tự) được in lên thiệp nhỏ đặt trong hộp."
+    },
+    {
+      "question": "Thanh toán như thế nào?",
+      "answer": "Bạn có thể thanh toán khi nhận hàng (COD) hoặc chuyển khoản. Với chuyển khoản, Kinh Thành sẽ gửi hướng dẫn sau khi xác nhận đơn."
+    },
+    {
+      "question": "Tôi bị dị ứng thì cần lưu ý gì?",
+      "answer": "Thông tin chất gây dị ứng của từng viên đang được cập nhật. Nếu bạn hoặc người nhận có dị ứng, hãy liên hệ Kinh Thành trước khi đặt."
+    }
+  ]
+}

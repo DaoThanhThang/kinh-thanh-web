@@ -212,7 +212,7 @@ describe('Trang đặt hàng', () => {
   it('gửi lỗi: báo lỗi + cho gửi lại, giữ nguyên dữ liệu đã nhập và hộp trong store', async () => {
     seed();
     const { service } = fakeService([
-      { ok: false, error: 'offline' },
+      { ok: false, error: 'Chưa gửi được đơn do lỗi hệ thống.' },
       { ok: true, orderId: 'KT-20261111-9999' },
     ]);
     renderPage(service);

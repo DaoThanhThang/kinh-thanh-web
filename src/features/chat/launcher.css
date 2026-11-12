@@ -1,0 +1,55 @@
+/* Nút nổi: CSS tối thiểu, nằm trong gói chính. Phần còn lại của khung chat ở chat.css (tải khi mở). */
+:root {
+  /* Dưới 64rem thanh tóm tắt của builder dính đáy màn hình; builder ghi chiều cao vào --chat-dock-h. */
+  --chat-bottom: calc(1.25rem + var(--chat-dock-h, 0px) + env(safe-area-inset-bottom, 0px));
+}
+
+.chat-launcher {
+  position: fixed;
+  right: var(--spacing-gutter);
+  bottom: var(--chat-bottom);
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1rem 0 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-cacao-950) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color var(--duration-base) var(--ease-out-expo),
+    background-color var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-out-expo);
+}
+
+.chat-launcher:hover {
+  color: var(--color-accent-bright);
+  background-color: color-mix(in srgb, var(--color-accent) 16%, var(--color-cacao-950));
+  border-color: var(--color-accent);
+}
+
+.chat-launcher[aria-expanded='true'] {
+  color: var(--color-accent-bright);
+  border-color: var(--color-accent-bright);
+}
+
+/* Đang cầm một viên ở builder (có thanh gợi ý + nút "Xem hộp" ở góc này): nhường chỗ. */
+html[data-bb-holding='true'] .chat-launcher {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-launcher {
+    transition: none;
+  }
+}

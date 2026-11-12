@@ -5,9 +5,11 @@ import '@fontsource/noto-serif-display/400-italic.css';
 import '@fontsource/be-vietnam-pro/300.css';
 import '@fontsource/be-vietnam-pro/400.css';
 import '@fontsource/be-vietnam-pro/500.css';
+import { HashScroll } from '@/components/site/HashScroll';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { SiteHeader } from '@/components/site/SiteHeader';
 import { SkipLink } from '@/components/site/SkipLink';
+import { ChatWidget } from '@/features/chat/ChatWidget';
 import { site } from '@/content/site';
 import './globals.css';
 
@@ -31,8 +33,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <SkipLink />
         <SiteHeader />
+        <HashScroll />
         {children}
         <SiteFooter />
+        <ChatWidget />
       </body>
     </html>
   );

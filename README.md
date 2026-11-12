@@ -67,10 +67,45 @@ Video nền ở `public/media/hero.mp4`, ảnh hiện ngay và dùng khi giảm 
 
 ## Đặt hàng hoạt động thế nào
 
-- Mặc định (`NEXT_PUBLIC_ORDER_ENDPOINT` để trống): chế độ mock, đơn chỉ được ghi ra console của trình duyệt sau khoảng 1 giây, không gửi đi đâu.
-- Khi đặt `NEXT_PUBLIC_ORDER_ENDPOINT` là URL Google Apps Script, đơn được POST tới đó (`text/plain`, JSON).
+- Mặc định (`NEXT_PUBLIC_ORDER_ENDPOINT` để trống): form gửi tới `POST /api/order` của chính site. Máy chủ kiểm lại đơn, tính lại giá từ danh mục, dựng ảnh khay rồi gửi email cho cửa hàng (xem mục "Nhận đơn qua email").
+- `NEXT_PUBLIC_ORDER_ENDPOINT=mock`: chỉ ghi đơn ra console (demo, không cần server).
+- `NEXT_PUBLIC_ORDER_ENDPOINT=<URL Google Apps Script>`: phương án thay thế, đơn được POST tới đó (`text/plain`, JSON), không có email/ảnh khay.
 
 Dạng dữ liệu đơn và mẫu `doPost` xem [docs/ORDER-PAYLOAD.md](docs/ORDER-PAYLOAD.md).
+
+## Nhận đơn qua email
+
+Khi khách bấm "Gửi đơn hàng", cửa hàng nhận một email (tiêu đề dạng `Đơn mới KT-… · Hộp 12 viên · 760.000 ₫ · Tên khách`) có ảnh khay khách đã xếp (nhúng trong thư và đính kèm `KT-…-khay.png` để in), danh sách từng ô, giá, thiệp, thông tin khách và checklist chuẩn bị. Khách có email thì nhận thêm thư xác nhận.
+
+Cấu hình bằng Gmail (Mật khẩu ứng dụng):
+
+1. Vào tài khoản Google dùng để gửi thư, bật **Xác minh 2 bước**.
+2. Vào https://myaccount.google.com/apppasswords, tạo **Mật khẩu ứng dụng** (đặt tên bất kỳ), sao chép chuỗi 16 ký tự.
+3. Trên Vercel: Project → Settings → **Environment Variables**, thêm `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USER=<gmail gửi thư>`, `SMTP_PASS=<mật khẩu ứng dụng>`, `MAIL_FROM=<gmail gửi thư>`, `SHOP_ORDER_EMAIL=<email nhận đơn>` (mặc định `abc@gmail.com`, đổi bất cứ lúc nào).
+4. **Redeploy** để biến có hiệu lực. Gửi thử một đơn để kiểm tra.
+
+Chạy local không cấu hình SMTP: chế độ xem trước, không gửi thư; email (HTML) và ảnh khay được ghi vào thư mục `kinh-thanh-mail` trong thư mục tạm của hệ điều hành (đường dẫn in ra ở terminal). Trên Vercel mà thiếu SMTP, đơn bị từ chối (khách thấy báo lỗi) để không mất đơn trong im lặng. Giới hạn chống lạm dụng: 5 đơn / 10 phút / IP (bộ nhớ từng instance, nâng cấp bằng Vercel KV/Upstash nếu cần).
+
+## Chatbot tư vấn
+
+Nút "Tư vấn quà" ở góc phải dưới mọi trang mở một khung chat: khách hỏi về hộp quà, khẩu vị, ngân sách, giao hàng; trợ lý (Claude Haiku 5.5) trả lời bằng tiếng Việt dựa trên đúng dữ liệu của site (`data/chocolates.json`, `data/boxes.json`, `data/store-info.json`, phần Câu chuyện) và có thể đề xuất một hộp cụ thể kèm nút "Xếp hộp này cho tôi" (xếp thẳng vào builder). Khoá API chỉ nằm ở server (`/api/chat`), không bao giờ gửi xuống trình duyệt.
+
+Đặt khoá trên Vercel:
+
+1. Tạo khoá tại https://platform.claude.com (Claude Console → API keys).
+2. Vercel: Project → Settings → **Environment Variables**, thêm `ANTHROPIC_API_KEY=<khoá>` (Production; không đặt tiền tố `NEXT_PUBLIC_`). Tuỳ chọn: `CHAT_MODEL` (mặc định `claude-haiku-5-5`), `CHAT_ENABLED`.
+3. **Redeploy** để biến có hiệu lực.
+
+Không có khoá: chạy local thì khung chat ở **chế độ thử** (trả lời mẫu, không gọi mạng, ghi chú nhỏ trong khung) để dựng giao diện; trên Vercel thì nút chat tự ẩn và `/api/chat` trả 503.
+
+Kiểm soát chi phí:
+
+- **Ước tính** (chưa đo thực tế, phụ thuộc độ dài hội thoại): giá Haiku 5.5 là $0,10 / $0,50 mỗi triệu token vào / ra, đọc cache $0,01. Prompt hệ thống (catalog + thông tin cửa hàng, vài nghìn token) được cache nên mỗi lượt hỏi chỉ tốn vài phần nghìn đô-la; một cuộc trò chuyện vài lượt khoảng $0,002, tức ~**$2 cho 1.000 cuộc trò chuyện**. Số token thật của từng yêu cầu được ghi ở log server (`[api/chat] model=… input=… cache_read=… output=…`), xem ở Vercel → Logs để đối chiếu.
+- **Spend limit**: vào Claude Console → Settings → Limits (hoặc Billing) và đặt hạn mức chi tiêu hàng tháng cho workspace/khoá này. Đây là chốt chặn cuối cùng, đặt trước khi mở cho khách.
+- **Công tắc tắt khẩn cấp**: đặt `CHAT_ENABLED=false` trên Vercel rồi Redeploy; nút chat biến mất và `/api/chat` trả 503. Muốn bật lại thì xoá biến (hoặc đặt `true`) và Redeploy. Cũng có thể xoá `ANTHROPIC_API_KEY` ở Console để vô hiệu khoá ngay.
+- Giới hạn có sẵn: 20 tin / 10 phút và 60 tin / ngày / IP, tin ≤ 600 ký tự, ≤ 16 tin mỗi yêu cầu, đầu ra ≤ 600 token, chỉ nhận yêu cầu cùng nguồn gốc. Bộ đếm nằm trong bộ nhớ từng instance serverless (chỉ răn đe, không tuyệt đối); nâng cấp bằng Vercel KV/Upstash cùng interface `check` (`src/lib/order-server/rate-limit.ts`).
+
+Chữ trong khung chat ở `src/content/chat.ts`; prompt hệ thống ở `src/lib/chat/system-prompt.ts` (tự cập nhật theo dữ liệu JSON, không cần sửa khi thêm viên). Khi thông tin cửa hàng còn `placeholder: true`, trợ lý luôn nhắc khách xác nhận lại với cửa hàng.
 
 ## Triển khai lên Vercel
 

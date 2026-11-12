@@ -75,11 +75,12 @@ export function CheckoutPage({
   );
   const pieces = useMemo(() => groupPieces(slots, chocolates), [slots, chocolates]);
 
-  const handleSubmit = async (customer: Customer) => {
+  const handleSubmit = async (customer: Customer, honeypot: string) => {
     if (!box || !complete) return;
     setSubmitting(true);
     setSubmitError(null);
     const payload = buildOrderPayload({ customer, box: snapshot, chocolates, boxes });
+    if (honeypot) payload.website = honeypot;
     const result = await (service ?? getOrderService()).submitOrder(payload);
     setSubmitting(false);
     if (result.ok) setSuccess({ orderId: result.orderId, box });
@@ -158,7 +159,7 @@ export function CheckoutPage({
                 now={now}
                 submitting={submitting}
                 error={submitError}
-                onSubmit={(c) => void handleSubmit(c)}
+                onSubmit={(c, hp) => void handleSubmit(c, hp)}
               />
             </div>
           </>

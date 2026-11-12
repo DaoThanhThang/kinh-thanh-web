@@ -1,9 +1,31 @@
 # ORDER-PAYLOAD – dữ liệu đơn hàng gửi đi
 
-Nguồn sự thật: `orderPayloadSchema` trong `src/lib/schemas/order.ts`. Client gửi qua `OrderService.submitOrder(payload)` (`src/lib/services/order.ts`). Chọn dịch vụ theo biến môi trường `NEXT_PUBLIC_ORDER_ENDPOINT`:
+Nguồn sự thật: `orderPayloadSchema` (payload trong form) và `orderRequestSchema` (yêu cầu gửi lên server) trong `src/lib/schemas/order.ts`. UI gọi `OrderService.submitOrder(payload)` (`src/lib/services/order.ts`); dịch vụ được chọn theo `NEXT_PUBLIC_ORDER_ENDPOINT`:
 
-- Không đặt (mặc định): `MockOrderService` — chờ 900ms, ghi payload ra `console`, trả `KT-yyyymmdd-NNNN`. Không gọi mạng, không gửi dữ liệu đi đâu (kể cả email).
-- Có đặt (URL Web App của Google Apps Script): `AppsScriptOrderService` — `POST` JSON với `Content-Type: text/plain;charset=utf-8` (tránh preflight CORS), `redirect: 'follow'`. Chưa bật; làm ở T16.
+- Không đặt (mặc định): `ApiOrderService` — `POST /api/order` (JSON, URL tương đối). Xem mục "API /api/order".
+- `mock`: `MockOrderService` — chờ 900ms, ghi payload ra `console`, không gọi mạng, không gửi email.
+- URL Google Apps Script: `AppsScriptOrderService` — `POST` JSON `text/plain;charset=utf-8`, `redirect: 'follow'`. Phương án thay thế, chưa kiểm thử (T16).
+
+## API /api/order (Node.js runtime, D56–D58)
+
+Yêu cầu (client chỉ gửi id viên, không gửi giá hay tên viên):
+
+```jsonc
+{
+  "customer": { "name": "...", "phone": "0912345678", "email": "..." },
+  "delivery": { "address": "...", "province": "...", "desiredDate": "2026-12-20", "note": "..." },
+  "payment": "cod", // "cod" | "transfer"
+  "box": { "size": 12, "slots": ["03", "04" /* đủ size phần tử, không null */] },
+  "message": "...", "to": "...", "from": "...", // ≤150 / ≤40 / ≤40 ký tự
+  "website": "" // honeypot, người thật luôn rỗng
+}
+```
+
+Máy chủ: giới hạn 5 đơn/10 phút/IP (429, `Retry-After`), thân ≤ 32 KB (413), phải là JSON (415/400), honeypot có chữ → trả ok nhưng không làm gì, kiểm bằng cùng schema form (400, thông báo tiếng Việt), hộp phải đủ viên, id phải có trong catalog và đang bán (400), tính lại toàn bộ giá từ catalog, tạo `KT-yyyymmdd-NNNN` (giờ Asia/Ho_Chi_Minh), dựng ảnh khay PNG, gửi email shop (lỗi → 500) và email khách (lỗi chỉ ghi log). Phản hồi: `{ "ok": true, "orderId" }` hoặc `{ "ok": false, "error": "<tiếng Việt>" }`.
+
+Biến môi trường và cách cấu hình Gmail: `.env.example`, README mục "Nhận đơn qua email".
+
+Phần dưới là payload của form (`OrderPayload`) dùng cho mock/Apps Script. `ApiOrderService` chuyển nó thành yêu cầu ở trên (`toOrderRequest`), bỏ `pricing` và `items`.
 
 ## Payload (version 1)
 
@@ -31,7 +53,7 @@ Nguồn sự thật: `orderPayloadSchema` trong `src/lib/schemas/order.ts`. Clie
 }
 ```
 
-Giá trong payload chỉ để đối chiếu; phía nhận nên tính lại từ bảng giá của mình khi T16 làm việc với dữ liệu thật.
+Giá trong payload chỉ để đối chiếu; `/api/order` không dùng chúng mà tự tính lại từ catalog.
 
 ## Phản hồi mong đợi
 

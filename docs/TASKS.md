@@ -21,4 +21,7 @@ Trạng thái: ⬜ chưa làm · 🔄 đang làm · ⏳ chờ duyệt · ✅ xon
 | T14 | Accessibility & hiệu năng | ⬜ |
 | T15 | E2E (Playwright) & SEO | ⬜ |
 | T16 | Kết nối Google Apps Script (sau) | ⬜ |
-| R1 | Sửa đổi 1 của khách: Hero có video nền + âm thanh, thứ tự Hero → Câu chuyện → Hộp mở là builder, mượt hơn trên mobile (D41–D50) | ⏳ |
+| R1 | Sửa đổi 1 của khách: Hero có video nền + âm thanh, thứ tự Hero → Câu chuyện → Hộp mở là builder, mượt hơn trên mobile (D41–D50) | ✅ |
+| T17 | Sửa neo "Đặt hàng ngay", menu điều hướng (desktop + mobile), thông tin cửa hàng tạm, trang /lien-he và /thong-tin (D52–D55) | ✅ |
+| T18 | Chatbot tư vấn (Haiku 5.5): `/api/chat` stream + tool `suggest_box`, widget lazy, chế độ thử, README chi phí (D59–D63) | ⏳ |
+| T19 | Nhận đơn qua email: `/api/order`, ảnh khay PNG, email shop + khách, chống lạm dụng (D56–D58) | ✅ |

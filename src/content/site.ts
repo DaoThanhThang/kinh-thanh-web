@@ -10,10 +10,29 @@ export const site = {
     story: { href: '/#cau-chuyen', label: 'Câu chuyện' },
     builder: { href: '/#builder', label: 'Chọn hộp quà' },
     order: { href: '/dat-hang', label: 'Đặt hàng' },
+    contact: { href: '/lien-he', label: 'Liên hệ' },
+    info: { href: '/thong-tin', label: 'Thông tin' },
+    /** Mục trên thanh đầu trang (desktop và menu mobile). `group` = menu con "Khác". */
+    items: [
+      { href: '/#cau-chuyen', label: 'Câu chuyện' },
+      { href: '/#builder', label: 'Hộp quà' },
+      { href: '/lien-he', label: 'Liên hệ' },
+    ],
+    more: {
+      label: 'Khác',
+      items: [
+        { href: '/thong-tin#hoi-dap', label: 'Câu hỏi thường gặp' },
+        { href: '/thong-tin#giao-hang', label: 'Giao hàng & đổi trả' },
+        { href: '/thong-tin#bao-quan', label: 'Bảo quản chocolate' },
+      ],
+    },
+    login: { label: 'Đăng nhập', soon: 'Sắp ra mắt' },
+    menuLabel: 'Menu',
+    openMenu: 'Mở menu',
+    closeMenu: 'Đóng menu',
   },
   footer: {
     navLabel: 'Liên kết',
-    contact: 'Thông tin liên hệ đang được cập nhật.',
     rights: (year: number) => `© ${year} Kinh Thành Chocolate.`,
   },
   notFound: {

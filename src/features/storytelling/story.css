@@ -10,7 +10,14 @@
   overflow-x: clip;
   /* Phần nặng SVG nằm dưới màn hình đầu: bỏ qua bố cục/vẽ tới khi gần tới (R1, mượt khi cuộn mobile). */
   content-visibility: auto;
-  contain-intrinsic-size: auto 2600px;
+  /* Gần chiều cao thật (đo: ~2280px ở 390, ~2390px ở 1440) để đích #builder không dịch khi Story vẽ. */
+  contain-intrinsic-size: auto 2300px;
+}
+
+@media (min-width: 64rem) {
+  .story {
+    contain-intrinsic-size: auto 2400px;
+  }
 }
 
 .story-inner {

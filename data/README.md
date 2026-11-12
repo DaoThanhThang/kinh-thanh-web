@@ -1,6 +1,6 @@
 # Dữ liệu
 
-Hai file JSON là nguồn dữ liệu của cửa hàng. Thêm hoặc sửa dữ liệu ở đây, không cần sửa code.
+Các file JSON là nguồn dữ liệu của cửa hàng. Thêm hoặc sửa dữ liệu ở đây, không cần sửa code.
 
 ## data/chocolates.json
 
@@ -51,3 +51,7 @@ Trang không bị vỡ. Mỗi phần tử được kiểm riêng (Zod, `src/lib/
 - Ảnh nội bộ không tồn tại trong `public/`: dùng `/chocolates/fallback.svg` và cảnh báo.
 
 Logic nằm ở `src/lib/services/catalog-core.ts` (thuần, có test) và `catalog.ts` (đọc JSON, kiểm file). Giao diện `CatalogService` cho phép sau này đổi nguồn sang Google Sheet mà không đổi nơi gọi.
+
+## data/store-info.json
+
+Thông tin cửa hàng cho footer, `/lien-he`, `/thong-tin` và chatbot sau này: `contact`, `shipping`, `returns`, `storage`, `faq`. Kiểm bằng `src/lib/schemas/store-info.ts`. Chuỗi để rỗng = chưa có (giao diện ẩn mục đó). `"placeholder": true` là nội dung mẫu tạm: các trang hiện dòng "Thông tin đang được cập nhật, có thể thay đổi." Khi có thông tin thật, thay nội dung rồi đổi thành `false`.

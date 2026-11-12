@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { OrderPayload } from '@/lib/schemas/order';
 import {
+  ApiOrderService,
   AppsScriptOrderService,
   MockOrderService,
   createOrderService,
@@ -95,12 +96,53 @@ describe('AppsScriptOrderService', () => {
 });
 
 describe('createOrderService', () => {
-  it('không có endpoint → mock; có endpoint → Apps Script', () => {
-    expect(createOrderService(undefined)).toBeInstanceOf(MockOrderService);
-    expect(createOrderService('')).toBeInstanceOf(MockOrderService);
-    expect(createOrderService('   ')).toBeInstanceOf(MockOrderService);
+  it('không có endpoint → /api/order; "mock" → mock; URL → Apps Script', () => {
+    expect(createOrderService(undefined)).toBeInstanceOf(ApiOrderService);
+    expect(createOrderService('')).toBeInstanceOf(ApiOrderService);
+    expect(createOrderService('   ')).toBeInstanceOf(ApiOrderService);
+    expect(createOrderService('mock')).toBeInstanceOf(MockOrderService);
     expect(createOrderService('https://script.example/exec')).toBeInstanceOf(
       AppsScriptOrderService,
     );
+  });
+});
+
+describe('ApiOrderService', () => {
+  const respond = (body: unknown, status = 200) =>
+    vi.fn(async () => new Response(JSON.stringify(body), { status }));
+
+  it('POST JSON tới /api/order, không gửi giá, trả mã đơn của server', async () => {
+    const fetchImpl = respond({ ok: true, orderId: 'KT-20261111-0001' });
+    const res = await new ApiOrderService('/api/order', fetchImpl).submitOrder(payload);
+    expect(res).toEqual({ ok: true, orderId: 'KT-20261111-0001' });
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe('/api/order');
+    expect(init.method).toBe('POST');
+    const sent = JSON.parse(String(init.body));
+    expect(sent).toMatchObject({
+      customer: { name: 'An', phone: '0912345678', email: 'an@example.com' },
+      delivery: { address: '12 Phố Huế', province: 'Hà Nội' },
+      payment: 'cod',
+      box: { size: 6, slots: ['01'] },
+      message: 'hi',
+      website: '',
+    });
+    expect(JSON.stringify(sent)).not.toContain('pricing');
+    expect(JSON.stringify(sent)).not.toContain('unitPrice');
+  });
+
+  it('lỗi từ server → thông báo của server; lỗi mạng → thông báo kết nối', async () => {
+    const bad = respond({ ok: false, error: 'Hộp chưa đầy.' }, 400);
+    expect(await new ApiOrderService('/api/order', bad).submitOrder(payload)).toEqual({
+      ok: false,
+      error: 'Hộp chưa đầy.',
+    });
+    const down = vi.fn(async () => {
+      throw new TypeError('Failed to fetch');
+    });
+    const res = await new ApiOrderService('/api/order', down).submitOrder(payload);
+    expect(res.ok).toBe(false);
+    const html = vi.fn(async () => new Response('<html>502</html>', { status: 502 }));
+    expect((await new ApiOrderService('/api/order', html).submitOrder(payload)).ok).toBe(false);
   });
 });

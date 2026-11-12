@@ -56,11 +56,13 @@ export function CustomerForm({
   submitting: boolean;
   /** Lỗi từ OrderService (không phải lỗi nhập liệu). */
   error: string | null;
-  onSubmit: (customer: Customer) => void;
+  /** `honeypot`: giá trị ô bẫy bot (người thật luôn để rỗng). */
+  onSubmit: (customer: Customer, honeypot: string) => void;
 }) {
   const [values, setValues] = useState<CustomerInput>(EMPTY);
   const [touched, setTouched] = useState<ReadonlySet<Field>>(new Set());
   const [attempted, setAttempted] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
 
   const schema = useMemo(() => createCustomerSchema(now), [now]);
   const parsed = useMemo(() => schema.safeParse(values), [schema, values]);
@@ -90,7 +92,7 @@ export function CustomerForm({
       if (first) document.getElementById(fieldId(first))?.focus();
       return;
     }
-    onSubmit(parsed.data);
+    onSubmit(parsed.data, honeypot);
   };
 
   /** Thuộc tính chung của một ô: id, aria-invalid, aria-describedby (gợi ý + lỗi). */
@@ -253,6 +255,21 @@ export function CustomerForm({
           {err('note')}
         </div>
 
+        {/* Bẫy bot: ẩn với người dùng và trình đọc màn hình, bot hay điền mọi ô. */}
+        <div className="co-hp" aria-hidden="true">
+          <label>
+            Website
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </label>
+        </div>
+
         <fieldset className="co-pay">
           <legend className="co-label">{t.paymentLegend}</legend>
           <div className="co-pay-options">
@@ -280,7 +297,7 @@ export function CustomerForm({
       <div className="co-submit">
         {error ? (
           <p className="co-error co-submit-error" role="alert">
-            {t.submitError}
+            {error}
           </p>
         ) : null}
         <Button type="submit" size="lg" loading={submitting} className="co-submit-btn">

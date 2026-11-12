@@ -455,3 +455,12 @@ input[type='date'].co-input {
   letter-spacing: 0.06em;
   color: var(--color-accent-bright);
 }
+
+/* Ô bẫy bot: ra khỏi màn hình nhưng vẫn là một ô nhập để bot điền. */
+.co-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

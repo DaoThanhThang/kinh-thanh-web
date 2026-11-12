@@ -1,4 +1,5 @@
-import type { OrderPayload } from '@/lib/schemas/order';
+import { checkout } from '@/content/checkout';
+import type { OrderPayload, OrderRequest } from '@/lib/schemas/order';
 
 export type OrderResult = { ok: true; orderId: string } | { ok: false; error: string };
 
@@ -84,10 +85,69 @@ export class AppsScriptOrderService implements OrderService {
   }
 }
 
-/** Có endpoint → Apps Script, không thì mock. */
+/** Chuyển payload của form sang hình dạng yêu cầu của /api/order (giá và tên viên bỏ đi: server tự tính). */
+export function toOrderRequest(payload: OrderPayload): OrderRequest {
+  const { customer, box, card } = payload;
+  return {
+    customer: { name: customer.name, phone: customer.phone, email: customer.email },
+    delivery: {
+      address: customer.address,
+      province: customer.province,
+      desiredDate: customer.desiredDate,
+      note: customer.note,
+    },
+    payment: customer.payment,
+    box: { size: box.size, slots: [...box.slots] },
+    message: card.message,
+    to: card.to,
+    from: card.from,
+    website: payload.website ?? '',
+  };
+}
+
+/**
+ * Gửi tới route nội bộ /api/order (mặc định). Máy chủ kiểm lại đơn, tính lại giá, dựng ảnh khay và
+ * gửi email cho cửa hàng. URL tương đối nên chạy ở mọi môi trường (localhost, preview, production).
+ */
+export class ApiOrderService implements OrderService {
+  constructor(
+    private readonly url: string = '/api/order',
+    private readonly fetchImpl: typeof fetch = (...args) => fetch(...args),
+  ) {}
+
+  async submitOrder(payload: OrderPayload): Promise<OrderResult> {
+    try {
+      const res = await this.fetchImpl(this.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(toOrderRequest(payload)),
+      });
+      const data: unknown = await res.json().catch(() => null);
+      if (data && typeof data === 'object') {
+        const d = data as { ok?: unknown; orderId?: unknown; error?: unknown };
+        if (res.ok && d.ok === true && typeof d.orderId === 'string' && d.orderId) {
+          return { ok: true, orderId: d.orderId };
+        }
+        if (typeof d.error === 'string' && d.error) return { ok: false, error: d.error };
+      }
+      return { ok: false, error: checkout.serverErrors.sendFailed };
+    } catch {
+      return { ok: false, error: checkout.serverErrors.network };
+    }
+  }
+}
+
+/**
+ * Chọn cách gửi đơn:
+ * - không đặt `endpoint` → `/api/order` của chính site (gửi email, D56);
+ * - "mock" → MockOrderService (chỉ ghi console, dùng khi demo không cần server);
+ * - URL → Apps Script Web App (phương án thay thế, xem docs/ORDER-PAYLOAD.md).
+ */
 export function createOrderService(endpoint?: string | null): OrderService {
-  const url = endpoint?.trim();
-  return url ? new AppsScriptOrderService(url) : new MockOrderService();
+  const value = endpoint?.trim();
+  if (!value) return new ApiOrderService();
+  if (value.toLowerCase() === 'mock') return new MockOrderService();
+  return new AppsScriptOrderService(value);
 }
 
 /** Dùng ở client. `process.env.NEXT_PUBLIC_*` phải viết nguyên văn để Next thay lúc build. */

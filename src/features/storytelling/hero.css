@@ -180,7 +180,9 @@
 /* Nút âm thanh: vòng foil mảnh, nền cacao đặc (không kính), vùng chạm 44px. */
 .hero-sound {
   position: absolute;
-  right: var(--spacing-gutter);
+  /* Nút "Tư vấn quà" (chat) cố định ở góc phải dưới. Desktop: nút tiếng dịch sang trái bằng chiều
+     rộng nút; mobile (xem dưới): nút tiếng nằm phía trên. Cả hai biến do ChatWidget đặt. */
+  right: calc(var(--spacing-gutter) + var(--chat-launcher-shift, 0px));
   bottom: 1.25rem;
   z-index: 2;
   display: grid;
@@ -209,6 +211,13 @@
 .hero-sound[aria-pressed='true'] {
   color: var(--color-accent-bright);
   border-color: var(--color-accent-bright);
+}
+
+@media (max-width: 47.99rem) {
+  .hero-sound {
+    right: var(--spacing-gutter);
+    bottom: calc(1.25rem + var(--chat-launcher-lift, 0px));
+  }
 }
 
 /* Hộp nhỏ trên điện thoại: thu logo trên nắp để "KINH THÀNH" (không xuống dòng) nằm gọn trong nắp. */

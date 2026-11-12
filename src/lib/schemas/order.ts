@@ -116,6 +116,99 @@ export const orderPayloadSchema = z.object({
     pieces: z.number().int().nonnegative(),
     total: z.number().int().nonnegative(),
   }),
+  /** Ô bẫy bot của form; chỉ có khi ô bị điền (người thật để rỗng). */
+  website: z.string().optional(),
 });
 
 export type OrderPayload = z.infer<typeof orderPayloadSchema>;
+
+// ---------------------------------------------------------------------------------------------
+// Yêu cầu gửi tới /api/order (client → server). Server KHÔNG tin giá hay tên viên từ client:
+// chỉ nhận id viên + thông tin khách, rồi tính lại mọi thứ từ catalog (xem docs/ORDER-PAYLOAD.md).
+// ---------------------------------------------------------------------------------------------
+
+export const CARD_MESSAGE_MAX = 150;
+export const CARD_NAME_MAX = 40;
+/** Giới hạn thân yêu cầu (byte): đơn lớn nhất hợp lệ chỉ vài KB. */
+export const ORDER_BODY_MAX_BYTES = 32 * 1024;
+
+const codePoints = (s: string) => Array.from(s).length;
+
+/** Hình dạng thô của yêu cầu; kiểm tra nghiệp vụ nằm ở `parseOrderRequest`. */
+export const orderRequestSchema = z.object({
+  customer: z.object({
+    name: z.string(),
+    phone: z.string(),
+    email: z.string().optional(),
+  }),
+  delivery: z.object({
+    address: z.string(),
+    province: z.string(),
+    desiredDate: z.string().optional(),
+    note: z.string().optional(),
+  }),
+  payment: z.string(),
+  box: z.object({
+    size: z.number().int().positive().max(64),
+    /** Id viên theo thứ tự ô; null = ô trống (bị từ chối vì hộp phải đầy). */
+    slots: z.array(z.string().nullable()).max(64),
+  }),
+  message: z.string().default(''),
+  to: z.string().default(''),
+  from: z.string().default(''),
+  /** Bẫy bot (honeypot): người thật không thấy nên luôn rỗng. */
+  website: z.string().optional(),
+});
+
+export type OrderRequest = z.infer<typeof orderRequestSchema>;
+
+export type ValidatedOrderRequest = {
+  customer: Customer;
+  box: { size: number; slots: (string | null)[] };
+  card: { message: string; to: string; from: string };
+};
+
+export type ParsedOrderRequest =
+  { ok: true; data: ValidatedOrderRequest } | { ok: false; error: string };
+
+/**
+ * Kiểm yêu cầu bằng đúng schema khách hàng của form (cùng thông báo lỗi tiếng Việt) và giới hạn
+ * thiệp. Việc kiểm hộp (đủ viên, id hợp lệ, còn hàng) cần catalog nên làm ở bước dựng đơn.
+ */
+export function parseOrderRequest(raw: unknown, now: Date = new Date()): ParsedOrderRequest {
+  const s = checkout.serverErrors;
+  const shape = orderRequestSchema.safeParse(raw);
+  if (!shape.success) return { ok: false, error: s.invalidData };
+  const r = shape.data;
+
+  const customer = createCustomerSchema(now).safeParse({
+    name: r.customer.name,
+    phone: r.customer.phone,
+    email: r.customer.email ?? '',
+    address: r.delivery.address,
+    province: r.delivery.province,
+    desiredDate: r.delivery.desiredDate ?? '',
+    note: r.delivery.note ?? '',
+    payment: r.payment,
+  });
+  if (!customer.success) {
+    return { ok: false, error: customer.error.issues[0]?.message ?? s.invalidData };
+  }
+
+  if (
+    codePoints(r.message) > CARD_MESSAGE_MAX ||
+    codePoints(r.to) > CARD_NAME_MAX ||
+    codePoints(r.from) > CARD_NAME_MAX
+  ) {
+    return { ok: false, error: s.cardTooLong };
+  }
+
+  return {
+    ok: true,
+    data: {
+      customer: customer.data,
+      box: { size: r.box.size, slots: r.box.slots },
+      card: { message: r.message, to: r.to, from: r.from },
+    },
+  };
+}

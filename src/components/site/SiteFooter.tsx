@@ -1,11 +1,15 @@
 import Link from 'next/link';
 import { Container, FoilDivider, Logo, Text } from '@/components/ui';
 import { siteConfig } from '@/config/site';
+import { getStoreInfo, telHref } from '@/lib/services/store-info';
+import { PlaceholderNotice } from './PlaceholderNotice';
 import { site } from '@/content/site';
 import './site.css';
 
 /** Chân trang. Năm tính lúc build (trang tĩnh). */
-export function SiteFooter() {
+export async function SiteFooter() {
+  const { contact, placeholder } = await getStoreInfo();
+  const tel = telHref(contact.phone);
   const year = new Date().getFullYear();
   return (
     <footer className="site-footer">
@@ -35,13 +39,45 @@ export function SiteFooter() {
                   {site.nav.order.label}
                 </Link>
               </li>
+              <li>
+                <Link href={site.nav.contact.href} className="site-link">
+                  {site.nav.contact.label}
+                </Link>
+              </li>
+              <li>
+                <Link href={site.nav.info.href} className="site-link">
+                  {site.nav.info.label}
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
         <div className="site-footer-meta">
-          <Text role="small" tone="muted">
-            {site.footer.contact}
-          </Text>
+          <div className="site-footer-contact">
+            <ul className="site-footer-details">
+              {contact.phone ? (
+                <li>
+                  {tel ? (
+                    <a href={tel} className="site-footer-a">
+                      {contact.phone}
+                    </a>
+                  ) : (
+                    contact.phone
+                  )}
+                </li>
+              ) : null}
+              {contact.email ? (
+                <li>
+                  <a href={`mailto:${contact.email}`} className="site-footer-a">
+                    {contact.email}
+                  </a>
+                </li>
+              ) : null}
+              {contact.address ? <li>{contact.address}</li> : null}
+              {contact.hours ? <li>{contact.hours}</li> : null}
+            </ul>
+            <PlaceholderNotice show={placeholder} />
+          </div>
           <Text role="small" tone="muted">
             {site.footer.rights(year)}
           </Text>

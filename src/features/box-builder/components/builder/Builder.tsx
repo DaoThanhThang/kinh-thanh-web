@@ -24,6 +24,7 @@ import { HoldBar } from './HoldBar';
 import { SizeSelector } from './SizeSelector';
 import { SummaryBar } from './SummaryBar';
 import { useBoxArrival } from './useBoxArrival';
+import { useChatDock } from './useChatDock';
 import './builder.css';
 
 /** Cỡ hộp mặc định khi chưa chọn (D12: 4×3). */
@@ -77,6 +78,7 @@ export function Builder({
   const boxAreaRef = useRef<HTMLDivElement>(null);
   const [boxVisible, setBoxVisible] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
 
   const heldId = useSelectionStore((s) => s.held);
   const placedCount = useSelectionStore((s) => s.placed);
@@ -99,6 +101,7 @@ export function Builder({
   const arrivalInit = arrival.init;
   const arrived = arrival.state === 'open';
   const editing = phase === 'edit';
+  useChatDock(summaryRef, editing, held !== null);
   const lidClosed =
     arrival.state === 'pending' || phase === 'closing' || phase === 'tying' || phase === 'ready';
   const ribbon =
@@ -380,7 +383,7 @@ export function Builder({
               </div>
 
               {editing ? (
-                <div className="bb-summary-area">
+                <div ref={summaryRef} className="bb-summary-area">
                   {held ? (
                     <HoldBar name={held.name} placed={placedCount} onDone={finishHold} />
                   ) : null}
