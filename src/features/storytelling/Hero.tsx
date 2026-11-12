@@ -6,14 +6,16 @@ import { HeroMedia } from './HeroMedia';
 import './hero.css';
 
 /**
- * Màn hình đầu: nền video/ảnh toàn khung, nội dung nằm bên TRÁI (bên phải chừa cho chủ thể của
+ * Màn hình đầu: nền toàn khung (art: thành đứng yên, vòng và chim xoay; hoặc video), nội dung nằm bên TRÁI (bên phải chừa cho chủ thể của
  * video): tên thương hiệu (h1 duy nhất), slogan, dòng dẫn, hộp đóng nhỏ và nút "Đặt hàng ngay".
- * Chỉ HeroMedia là client (video, âm thanh); phần còn lại là server component.
+ * Chỉ HeroMedia là client (nền art có animation, hoặc video + âm thanh); phần còn lại là server component.
  */
 export function Hero({ cols, rows }: { cols: number; rows: number }) {
   return (
     <section className="hero" aria-label={home.heroLabel}>
       <HeroMedia
+        mode={media.heroMode}
+        art={media.heroArt}
         poster={media.heroPoster}
         video={media.heroVideo}
         videoMobile={media.heroVideoMobileExists ? media.heroVideoMobile : undefined}

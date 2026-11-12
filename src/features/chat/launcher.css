@@ -44,6 +44,8 @@
 }
 
 /* Đang cầm một viên ở builder (có thanh gợi ý + nút "Xem hộp" ở góc này): nhường chỗ. */
+/* Menu mobile của thanh đầu đang mở: nút nổi không nổi lên trên menu. */
+html[data-site-menu='open'] .chat-launcher,
 html[data-bb-holding='true'] .chat-launcher {
   display: none;
 }

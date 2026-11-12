@@ -20,8 +20,6 @@ afterEach(() => {
 
 const menuButton = () => screen.getByRole('button', { name: /menu/i });
 const sheet = () => document.getElementById('site-menu') as HTMLElement;
-const moreButton = () => screen.getByRole('button', { name: 'Khác' });
-const panel = () => document.getElementById('site-more-panel') as HTMLElement;
 
 describe('SiteHeader: menu mobile', () => {
   it('đóng mặc định: aria-expanded=false, tấm menu inert, thân trang cuộn được', () => {
@@ -44,29 +42,22 @@ describe('SiteHeader: menu mobile', () => {
     expect(document.querySelector('.site-header')).toHaveAttribute('data-solid', 'true');
   });
 
-  it('liệt kê đủ mục, "Khác" mở sẵn thành nhóm, Đăng nhập khoá ở cuối', () => {
+  it('liệt kê sáu mục thành MỘT danh sách phẳng, nhãn dài, không nhóm con, không đăng nhập', () => {
     render(<SiteHeader />);
     fireEvent.click(menuButton());
     const s = within(sheet());
-    expect(s.getByRole('link', { name: 'Hộp quà' })).toHaveAttribute('href', '/#builder');
-    expect(s.getByRole('link', { name: 'Liên hệ' })).toHaveAttribute('href', '/lien-he');
-    expect(s.getByRole('link', { name: 'Câu hỏi thường gặp' })).toHaveAttribute(
-      'href',
-      '/thong-tin#hoi-dap',
-    );
-    expect(s.getByRole('link', { name: 'Giao hàng & đổi trả' })).toHaveAttribute(
-      'href',
-      '/thong-tin#giao-hang',
-    );
-    expect(s.getByRole('link', { name: 'Bảo quản chocolate' })).toHaveAttribute(
-      'href',
-      '/thong-tin#bao-quan',
-    );
-    expect(within(s.getByRole('list', { name: 'Khác' })).getAllByRole('link')).toHaveLength(3);
-    const login = s.getByRole('button', { name: /Đăng nhập/ });
-    expect(login).toBeDisabled();
-    expect(login).toHaveAttribute('aria-disabled', 'true');
-    expect(login).toHaveTextContent('Sắp ra mắt');
+    const links = s.getAllByRole('link');
+    expect(links.map((l) => [l.textContent, l.getAttribute('href')])).toEqual([
+      ['Câu chuyện', '/#cau-chuyen'],
+      ['Hộp quà', '/#builder'],
+      ['Liên hệ', '/lien-he'],
+      ['Câu hỏi thường gặp', '/thong-tin#hoi-dap'],
+      ['Giao hàng & đổi trả', '/thong-tin#giao-hang'],
+      ['Bảo quản chocolate', '/thong-tin#bao-quan'],
+    ]);
+    expect(s.getAllByRole('list')).toHaveLength(1);
+    expect(s.queryByRole('button')).not.toBeInTheDocument();
+    expect(sheet().textContent).not.toMatch(/Đăng nhập|Sắp ra mắt|Khác/);
   });
 
   it('Esc đóng, trả focus về nút menu, mở lại cuộn nền', () => {
@@ -95,6 +86,14 @@ describe('SiteHeader: menu mobile', () => {
     expect(document.body.style.overflow).toBe('');
   });
 
+  it('menu mở đặt data-site-menu trên <html> (ẩn nút chat), đóng thì gỡ', () => {
+    render(<SiteHeader />);
+    fireEvent.click(menuButton());
+    expect(document.documentElement.dataset.siteMenu).toBe('open');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(document.documentElement.dataset.siteMenu).toBeUndefined();
+  });
+
   it('bấm nút menu lần nữa thì đóng', () => {
     render(<SiteHeader />);
     fireEvent.click(menuButton());
@@ -120,70 +119,26 @@ describe('SiteHeader: menu mobile', () => {
 });
 
 describe('SiteHeader: desktop', () => {
-  it('có các liên kết chính', () => {
+  it('sáu liên kết phẳng, nhãn ngắn, đúng thứ tự và đích', () => {
     render(<SiteHeader />);
     const nav = within(screen.getByRole('navigation', { name: 'Điều hướng chính' }));
-    expect(nav.getByRole('link', { name: 'Câu chuyện' })).toHaveAttribute('href', '/#cau-chuyen');
-    expect(nav.getByRole('link', { name: 'Hộp quà' })).toHaveAttribute('href', '/#builder');
-    expect(nav.getByRole('link', { name: 'Liên hệ' })).toHaveAttribute('href', '/lien-he');
+    expect(nav.getAllByRole('link').map((l) => [l.textContent, l.getAttribute('href')])).toEqual([
+      ['Câu chuyện', '/#cau-chuyen'],
+      ['Hộp quà', '/#builder'],
+      ['Liên hệ', '/lien-he'],
+      ['Hỏi đáp', '/thong-tin#hoi-dap'],
+      ['Giao hàng', '/thong-tin#giao-hang'],
+      ['Bảo quản', '/thong-tin#bao-quan'],
+    ]);
   });
 
-  it('"Khác" đóng/mở bằng nút, có aria-expanded và aria-controls', () => {
-    render(<SiteHeader />);
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'false');
-    expect(moreButton()).toHaveAttribute('aria-controls', 'site-more-panel');
-    expect(panel()).toHaveAttribute('inert');
-    fireEvent.click(moreButton());
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'true');
-    expect(panel()).not.toHaveAttribute('inert');
-    expect(within(panel()).getAllByRole('link')).toHaveLength(3);
-    fireEvent.click(moreButton());
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  it('Esc đóng bảng con và trả focus về nút "Khác"', () => {
-    render(<SiteHeader />);
-    fireEvent.click(moreButton());
-    within(panel()).getAllByRole('link')[0]?.focus();
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'false');
-    expect(moreButton()).toHaveFocus();
-  });
-
-  it('bấm ra ngoài hoặc rời focus thì đóng; chọn một mục cũng đóng', () => {
-    render(<SiteHeader />);
-    fireEvent.click(moreButton());
-    fireEvent.pointerDown(document.body);
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'false');
-
-    fireEvent.click(moreButton());
-    fireEvent.blur(moreButton(), { relatedTarget: document.body });
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'false');
-
-    fireEvent.click(moreButton());
-    fireEvent.click(within(panel()).getByRole('link', { name: 'Bảo quản chocolate' }));
-    expect(moreButton()).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  it('mũi tên xuống mở bảng và nhảy vào mục đầu, mũi tên di chuyển giữa các mục', () => {
-    render(<SiteHeader />);
-    moreButton().focus();
-    fireEvent.keyDown(moreButton(), { key: 'ArrowDown' });
-    const links = within(panel()).getAllByRole('link');
-    expect(links[0]).toHaveFocus();
-    fireEvent.keyDown(links[0]!, { key: 'ArrowDown' });
-    expect(links[1]).toHaveFocus();
-    fireEvent.keyDown(links[1]!, { key: 'ArrowUp' });
-    expect(links[0]).toHaveFocus();
-  });
-
-  it('Đăng nhập ở thanh desktop là nút khoá, không phải liên kết', () => {
-    render(<SiteHeader />);
-    const nav = within(screen.getByRole('navigation', { name: 'Điều hướng chính' }));
-    const login = nav.getByRole('button', { name: /Đăng nhập/ });
-    expect(login).toBeDisabled();
-    expect(login).toHaveAttribute('aria-disabled', 'true');
-    expect(nav.queryByRole('link', { name: /Đăng nhập/ })).not.toBeInTheDocument();
-    expect(login).toHaveTextContent('Sắp ra mắt');
+  it('không còn menu thả xuống "Khác" hay nút Đăng nhập ở đâu cả', () => {
+    const { container } = render(<SiteHeader />);
+    expect(screen.queryByRole('button', { name: 'Khác' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Đăng nhập|Sắp ra mắt/)).not.toBeInTheDocument();
+    expect(container.querySelector('[aria-expanded][aria-controls="site-more-panel"]')).toBeNull();
+    expect(container.querySelector('.site-more-panel, .site-login')).toBeNull();
+    // Chỉ còn nút menu mobile là nút có aria-expanded.
+    expect(container.querySelectorAll('button[aria-expanded]')).toHaveLength(1);
   });
 });

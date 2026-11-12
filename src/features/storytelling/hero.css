@@ -41,6 +41,117 @@
 }
 
 /*
+ * Nền art (R2, D66): "thành đứng yên, vòng và chim xoay". Sân khấu 16:9 tính như object-fit: cover
+ * với object-position 72% 50% (đúng như poster), nên ảnh tĩnh và các lớp động luôn khớp nhau.
+ * Chỉ ba lớp chuyển động (vòng + hai quỹ đạo chim), chỉ `transform`, không filter/blur.
+ */
+.hero-media--art {
+  container-type: size;
+}
+
+.hero-art-stage {
+  --sw: max(100cqw, calc(100cqh * 16 / 9));
+  --foil-w: 1.2px;
+  position: absolute;
+  width: var(--sw);
+  aspect-ratio: 16 / 9;
+  left: calc((100cqw - var(--sw)) * 0.72);
+  --st: calc((100cqh - var(--sw) * 9 / 16) * 0.5);
+  top: var(--st);
+  color: var(--color-accent);
+}
+
+.hero-art-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+/*
+ * Dải đầu: không vẽ gì chuyển động trong (chiều cao thanh đầu + 1.5rem) tính từ đỉnh hero, mờ dần
+ * thêm 3rem bên dưới, để chim/vòng không đè lên liên kết điều hướng ở mọi cỡ màn hình.
+ */
+.hero-art-band {
+  --band: calc(var(--site-header-h) + 1.5rem - var(--st));
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent var(--band),
+    black calc(var(--band) + 3rem)
+  );
+  mask-image: linear-gradient(to bottom, transparent var(--band), black calc(var(--band) + 3rem));
+}
+
+/* Khuôn che: vòng và chim đi phía sau cổng thành và đồi (khuôn nằm ở lớp tĩnh, không quay). */
+.hero-art-fx {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--hero-mask);
+  mask-image: var(--hero-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.hero-spin {
+  position: absolute;
+  aspect-ratio: 1;
+  contain: paint;
+  will-change: transform;
+  animation: hero-spin var(--spin) linear infinite;
+}
+
+.hero-ring {
+  opacity: 0.85;
+}
+
+.hero-ring-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mỗi con chim nằm trên một "cần" quay quanh tâm; chim hướng theo tiếp tuyến nên lướt đi, không lộn. */
+.hero-bird-arm {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-bird {
+  position: absolute;
+  left: 50%;
+  translate: -50% -50%;
+}
+
+.hero-bird-svg {
+  --foil-w: 1.7px;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-media--art[data-paused='true'] .hero-spin {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-spin {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/*
  * Lớp phủ để chữ đọc được trên mọi khung hình: mobile phủ từ đáy lên (nội dung xếp dọc);
  * từ 48rem phủ từ trái sang phải (đậm ở trái, hết ở khoảng 60%), thêm dải mờ đáy và đỉnh
  * (đỉnh để thanh đầu trang trong suốt vẫn đọc được).

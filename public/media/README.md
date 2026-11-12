@@ -1,21 +1,34 @@
 # Media của trang chủ
 
-**Hai tệp trong thư mục này là BẢN TẠM** do đội dựng vẽ để kiểm tra bố cục. Cảnh cổng thành, chim Lạc và âm thanh ambient chỉ là minh hoạ. Hãy thay bằng video thật của thương hiệu.
+Nền hero có hai chế độ, chọn bằng `heroMode` trong `src/config/media.ts`:
+
+- `'art'` (MẶC ĐỊNH): nền vẽ bằng mã. Thành đứng yên (ảnh tĩnh `hero-citadel.jpg`), vòng trống đồng và chim Lạc xoay chậm phía sau thành. **Không có video, không có nút âm thanh.**
+- `'video'`: video nền + ảnh poster + nút bật/tắt âm thanh (như bản R1).
 
 | Tệp | Vai trò |
 | --- | --- |
-| `hero.mp4` | Video nền của hero (tự phát, tắt tiếng, lặp). |
-| `hero-poster.jpg` | Hiện ngay khi tải trang, và là ảnh duy nhất khi khách bật giảm chuyển động / tiết kiệm dữ liệu / video lỗi. |
+| `hero-citadel.jpg` | Lớp TĨNH của chế độ art (1920×1080, ≤ 250 KB): hoàng hôn cacao, thành, đồi, sóng; KHÔNG có vòng và chim (hai lớp đó là mã). Dựng bằng `npx tsx scripts/make-hero-citadel.tsx`. |
+| `hero.mp4` | Video nền của chế độ video (tự phát, tắt tiếng, lặp). Bản tạm. |
+| `hero-poster.jpg` | Chế độ video: hiện ngay khi tải trang, và là ảnh duy nhất khi bật giảm chuyển động / tiết kiệm dữ liệu / video lỗi. Bản tạm. |
 | `hero-mobile.mp4` (tuỳ chọn) | Bản riêng cho màn hình hẹp (dưới 768px). Chưa có. |
 
-## Cách thay
+## Dùng video thật
 
-1. Đặt video mới vào `public/media/hero.mp4` và ảnh mới vào `public/media/hero-poster.jpg`, GIỮ NGUYÊN TÊN. Không cần sửa code.
-2. Nếu video không có tiếng: mở `src/config/media.ts`, đặt `heroVideoHasAudio: false` (nút bật/tắt âm thanh sẽ ẩn).
-3. Bản mobile: thêm `public/media/hero-mobile.mp4`, rồi đặt `heroVideoMobileExists: true` trong `src/config/media.ts`. Trình duyệt màn hình hẹp sẽ dùng bản này, màn hình rộng dùng `hero.mp4`.
-4. Đổi tên tệp hoặc đường dẫn: sửa `src/config/media.ts`.
+1. Đặt video vào `public/media/hero.mp4` và ảnh khung đầu vào `public/media/hero-poster.jpg`, GIỮ NGUYÊN TÊN.
+2. Mở `src/config/media.ts`, đặt `heroMode: 'video'`.
+3. Nếu video không có tiếng: đặt `heroVideoHasAudio: false` (nút bật/tắt âm thanh sẽ ẩn).
+4. Bản mobile: thêm `public/media/hero-mobile.mp4`, rồi đặt `heroVideoMobileExists: true`. Trình duyệt màn hình hẹp sẽ dùng bản này, màn hình rộng dùng `hero.mp4`.
+5. Đổi tên tệp hoặc đường dẫn: sửa `src/config/media.ts`.
 
-## Khuyến nghị cho video
+Muốn quay lại nền art: đặt `heroMode: 'art'`.
+
+## Nền art
+
+- Ảnh tĩnh và các lớp động dùng chung một hệ toạ độ 1920×1080 (`src/features/storytelling/heroArt.ts`) và cùng cách cắt như `object-fit: cover` (điểm neo 72% 50%), nên vòng và chim luôn nằm đúng tâm cổng thành ở mọi màn hình.
+- Đổi hình thành/đồi/sóng/ánh sáng: sửa `scripts/make-hero-citadel.tsx` rồi chạy lại (cần Playwright và sharp). Đổi tốc độ xoay: `RING_SECONDS` và `ORBITS[].seconds` trong `heroArt.ts`.
+- Giảm chuyển động: không xoay. Tạm dừng khi hero ra khỏi khung nhìn hoặc tab bị ẩn.
+
+## Khuyến nghị cho video (chế độ video)
 
 - 1920×1080, H.264 (profile High, yuv420p) trong MP4, tiếng AAC. Có `-movflags +faststart` để bắt đầu phát sớm.
 - Dung lượng ≤ 8–10 MB, dài 10–20 giây, **lặp liền mạch** (khung cuối nối được với khung đầu).

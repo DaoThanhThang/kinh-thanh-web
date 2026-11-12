@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { home } from '@/content/home';
+import { HeroArt } from './HeroArt';
+import { MQ_REDUCED, subscribeMotion } from './heroMotion';
 
-type Props = {
+type VideoProps = {
   poster: string;
   video: string;
   /** Bản video cho màn hình hẹp; không truyền thì dùng chung `video`. */
@@ -11,8 +13,6 @@ type Props = {
   /** Video có tiếng: hiện nút bật/tắt âm thanh. */
   hasAudio: boolean;
 };
-
-const MQ_REDUCED = '(prefers-reduced-motion: reduce)';
 
 type SaveDataNavigator = Navigator & { connection?: { saveData?: boolean } };
 
@@ -22,13 +22,6 @@ function videoAllowed(): boolean {
   const reduced = typeof window.matchMedia === 'function' && window.matchMedia(MQ_REDUCED).matches;
   const saveData = (navigator as SaveDataNavigator).connection?.saveData === true;
   return !reduced && !saveData;
-}
-
-function subscribeMotion(onChange: () => void): () => void {
-  if (typeof window.matchMedia !== 'function') return () => {};
-  const mq = window.matchMedia(MQ_REDUCED);
-  mq.addEventListener?.('change', onChange);
-  return () => mq.removeEventListener?.('change', onChange);
 }
 
 function SpeakerIcon({ muted }: { muted: boolean }) {
@@ -58,12 +51,25 @@ function SpeakerIcon({ muted }: { muted: boolean }) {
   );
 }
 
+type Props = VideoProps & {
+  /** 'art' (mặc định ở `media.ts`): nền vẽ bằng mã, không có video. 'video': video + poster + nút tiếng. */
+  mode?: 'art' | 'video';
+  /** Ảnh tĩnh của nền art (chỉ dùng khi mode là 'art'). */
+  art?: string;
+};
+
+/** Chọn nền hero theo `media.heroMode` (R2, D66). Chế độ video giữ nguyên hành vi R1. */
+export function HeroMedia({ mode = 'video', art, ...video }: Props) {
+  if (mode === 'art') return <HeroArt background={art ?? video.poster} />;
+  return <HeroVideo {...video} />;
+}
+
 /**
- * Nền hero: ảnh poster hiện ngay (không chặn vẽ lần đầu), video phủ lên khi đã phát (mờ dần 600ms).
+ * Nền hero (chế độ video): ảnh poster hiện ngay (không chặn vẽ lần đầu), video phủ lên khi đã phát (mờ dần 600ms).
  * Giảm chuyển động / Save-Data → chỉ có ảnh, không gắn nguồn video. Video tạm dừng khi hero ra khỏi
  * khung nhìn hoặc tab bị ẩn. Âm thanh mặc định tắt; nút bật/tắt là một thao tác của người dùng.
  */
-export function HeroMedia({ poster, video, videoMobile, hasAudio }: Props) {
+function HeroVideo({ poster, video, videoMobile, hasAudio }: VideoProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const allowed = useSyncExternalStore(subscribeMotion, videoAllowed, () => false);

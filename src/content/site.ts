@@ -7,33 +7,24 @@ export const site = {
   skipLink: 'Bỏ qua tới nội dung chính',
   nav: {
     label: 'Điều hướng chính',
-    story: { href: '/#cau-chuyen', label: 'Câu chuyện' },
-    builder: { href: '/#builder', label: 'Chọn hộp quà' },
-    order: { href: '/dat-hang', label: 'Đặt hàng' },
-    contact: { href: '/lien-he', label: 'Liên hệ' },
-    info: { href: '/thong-tin', label: 'Thông tin' },
-    /** Mục trên thanh đầu trang (desktop và menu mobile). `group` = menu con "Khác". */
+    /**
+     * Sáu mục, một dòng duy nhất ở desktop (`label` ngắn) và một danh sách phẳng ở menu mobile
+     * (`menuLabel` đầy đủ). Không còn nhóm con, không có đăng nhập (R2, D64).
+     */
     items: [
-      { href: '/#cau-chuyen', label: 'Câu chuyện' },
-      { href: '/#builder', label: 'Hộp quà' },
-      { href: '/lien-he', label: 'Liên hệ' },
+      { href: '/#cau-chuyen', label: 'Câu chuyện', menuLabel: 'Câu chuyện' },
+      { href: '/#builder', label: 'Hộp quà', menuLabel: 'Hộp quà' },
+      { href: '/lien-he', label: 'Liên hệ', menuLabel: 'Liên hệ' },
+      { href: '/thong-tin#hoi-dap', label: 'Hỏi đáp', menuLabel: 'Câu hỏi thường gặp' },
+      { href: '/thong-tin#giao-hang', label: 'Giao hàng', menuLabel: 'Giao hàng & đổi trả' },
+      { href: '/thong-tin#bao-quan', label: 'Bảo quản', menuLabel: 'Bảo quản chocolate' },
     ],
-    more: {
-      label: 'Khác',
-      items: [
-        { href: '/thong-tin#hoi-dap', label: 'Câu hỏi thường gặp' },
-        { href: '/thong-tin#giao-hang', label: 'Giao hàng & đổi trả' },
-        { href: '/thong-tin#bao-quan', label: 'Bảo quản chocolate' },
-      ],
-    },
-    login: { label: 'Đăng nhập', soon: 'Sắp ra mắt' },
     menuLabel: 'Menu',
     openMenu: 'Mở menu',
     closeMenu: 'Đóng menu',
   },
   footer: {
-    navLabel: 'Liên kết',
-    rights: (year: number) => `© ${year} Kinh Thành Chocolate.`,
+    rights: (year: number) => `© ${year} Kinh Thành Chocolate`,
   },
   notFound: {
     title: 'Không tìm thấy trang',

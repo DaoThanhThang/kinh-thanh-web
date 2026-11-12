@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { home } from '@/content/home';
 import { Hero } from '../Hero';
@@ -12,7 +12,12 @@ const mockMotion = (reduced: boolean) =>
     removeEventListener: () => undefined,
   }));
 
-const props = { poster: '/media/p.jpg', video: '/media/v.mp4', hasAudio: true };
+const props = {
+  mode: 'video' as const,
+  poster: '/media/p.jpg',
+  video: '/media/v.mp4',
+  hasAudio: true,
+};
 const videoEl = () => document.querySelector('video') as HTMLVideoElement;
 
 beforeEach(() => {
@@ -120,5 +125,80 @@ describe('HeroMedia: tạm dừng khi ra khỏi khung nhìn', () => {
     const sources = container.querySelectorAll('source');
     expect(sources).toHaveLength(2);
     expect(sources[0]).toHaveAttribute('media', '(max-width: 767px)');
+  });
+});
+
+describe('HeroMedia: chế độ art (mặc định)', () => {
+  const art = { ...props, mode: 'art' as const, art: '/media/a.jpg' };
+  const root = (c: HTMLElement) => c.querySelector('.hero-media--art') as HTMLElement;
+
+  it('không có <video>, không có nút âm thanh, có ảnh nền tĩnh và các lớp động', () => {
+    const { container } = render(<HeroMedia {...art} />);
+    expect(container.querySelector('video')).toBeNull();
+    expect(container.querySelector('source')).toBeNull();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(container.querySelector('img.hero-art-bg')).toHaveAttribute('src', '/media/a.jpg');
+    // Tối đa 3 lớp động: vòng + hai quỹ đạo chim; 5 con chim tổng cộng.
+    expect(container.querySelectorAll('.hero-spin')).toHaveLength(3);
+    expect(container.querySelectorAll('.hero-bird')).toHaveLength(5);
+    expect(root(container)).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('chạy bình thường: data-paused=false, data-motion=on', () => {
+    const { container } = render(<HeroMedia {...art} />);
+    expect(root(container)).toHaveAttribute('data-paused', 'false');
+    expect(root(container)).toHaveAttribute('data-motion', 'on');
+  });
+
+  it('prefers-reduced-motion: animation tạm dừng (data-paused=true, data-motion=still)', () => {
+    mockMotion(true);
+    const { container } = render(<HeroMedia {...art} />);
+    expect(root(container)).toHaveAttribute('data-paused', 'true');
+    expect(root(container)).toHaveAttribute('data-motion', 'still');
+  });
+
+  it('tạm dừng khi hero ra khỏi khung nhìn, chạy lại khi quay về', () => {
+    let cb: IntersectionObserverCallback = () => undefined;
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(c: IntersectionObserverCallback) {
+          cb = c;
+        }
+        observe() {}
+        disconnect() {}
+        unobserve() {}
+      },
+    );
+    const { container } = render(<HeroMedia {...art} />);
+    const fire = (isIntersecting: boolean) =>
+      act(() => cb([{ isIntersecting } as IntersectionObserverEntry], {} as IntersectionObserver));
+    fire(false);
+    expect(root(container)).toHaveAttribute('data-paused', 'true');
+    fire(true);
+    expect(root(container)).toHaveAttribute('data-paused', 'false');
+  });
+
+  it('tạm dừng khi tab bị ẩn', () => {
+    const { container } = render(<HeroMedia {...art} />);
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(root(container)).toHaveAttribute('data-paused', 'true');
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(root(container)).toHaveAttribute('data-paused', 'false');
+  });
+});
+
+describe('Hero: nền theo media.heroMode', () => {
+  it('mặc định là art: không có video, không có nút âm thanh', () => {
+    const { container } = render(<Hero cols={4} rows={3} />);
+    expect(container.querySelector('.hero-media--art')).not.toBeNull();
+    expect(container.querySelector('video')).toBeNull();
+    expect(screen.queryByRole('button', { name: /âm thanh/ })).not.toBeInTheDocument();
   });
 });

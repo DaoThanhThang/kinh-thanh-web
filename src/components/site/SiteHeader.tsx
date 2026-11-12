@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Logo } from '@/components/ui';
 import { site } from '@/content/site';
 import './site.css';
@@ -30,42 +30,13 @@ function Burger() {
   );
 }
 
-function Chevron() {
-  return (
-    <svg
-      className="site-chevron"
-      viewBox="0 0 12 12"
-      width="12"
-      height="12"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.1" />
-    </svg>
-  );
-}
-
-/** "Đăng nhập": chưa có tính năng, là nút bị khoá (không phải liên kết) kèm chữ "Sắp ra mắt". */
-function Login({ className }: { className?: string }) {
-  return (
-    <button
-      type="button"
-      className={['site-login', className].filter(Boolean).join(' ')}
-      disabled
-      aria-disabled="true"
-    >
-      <span>{nav.login.label}</span>
-      <span className="site-login-soon">{nav.login.soon}</span>
-    </button>
-  );
-}
-
 /**
  * Thanh đầu trang (cố định). Trong suốt ở đầu trang, cacao đặc + đường kẻ mảnh khi cuộn hoặc khi
  * menu mở (một IntersectionObserver trên phần tử mốc, không lắng nghe sự kiện cuộn).
  *
- * Từ 64rem: liên kết nằm ngang, "Khác" là nút mở bảng con (Esc, bấm ngoài, rời focus thì đóng).
- * Dưới 64rem: nút menu mở tấm menu dưới thanh đầu (khoá cuộn nền, focus vào menu, đóng thì trả focus).
+ * Từ 64rem: sáu liên kết phẳng trên MỘT dòng, căn phải, cùng cỡ chữ/đường cơ sở.
+ * Dưới 64rem: nút menu mở tấm menu dưới thanh đầu, một danh sách phẳng (khoá cuộn nền, focus vào
+ * menu, Esc/bấm ngoài đóng và trả focus). Không còn menu con, không có đăng nhập (D64).
  */
 export function SiteHeader() {
   const pathname = usePathname();
@@ -73,12 +44,8 @@ export function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
   const burgerRef = useRef<HTMLButtonElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
-  const moreRef = useRef<HTMLLIElement>(null);
-  const moreBtnRef = useRef<HTMLButtonElement>(null);
-  const focusFirstMore = useRef(false);
   const [solid, setSolid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     const el = sentinel.current;
@@ -92,16 +59,13 @@ export function SiteHeader() {
     setMenuOpen(false);
     if (restoreFocus) burgerRef.current?.focus({ preventScroll: true });
   }, []);
-  const closeMore = useCallback((restoreFocus: boolean) => {
-    setMoreOpen(false);
-    if (restoreFocus) moreBtnRef.current?.focus({ preventScroll: true });
-  }, []);
 
   // Menu mobile mở: khoá cuộn nền, focus vào menu, Esc, bấm ngoài, rời focus, đổi sang desktop.
   useEffect(() => {
     if (!menuOpen) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.dataset.siteMenu = 'open';
     sheetRef.current?.querySelector<HTMLElement>('a[href]')?.focus({ preventScroll: true });
 
     const onKey = (e: globalThis.KeyboardEvent) => {
@@ -119,58 +83,12 @@ export function SiteHeader() {
     mq?.addEventListener?.('change', onMq);
     return () => {
       document.body.style.overflow = prevOverflow;
+      delete document.documentElement.dataset.siteMenu;
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('pointerdown', onPointer);
       mq?.removeEventListener?.('change', onMq);
     };
   }, [menuOpen, closeMenu]);
-
-  // Bảng "Khác" (desktop) mở: Esc, bấm ngoài.
-  useEffect(() => {
-    if (!moreOpen) return;
-    if (focusFirstMore.current) {
-      focusFirstMore.current = false;
-      moreRef.current?.querySelector<HTMLElement>('[role="menuitem"], a[href]')?.focus();
-    }
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === 'Escape') closeMore(true);
-    };
-    const onPointer = (e: Event) => {
-      if (!moreRef.current?.contains(e.target as Node)) closeMore(false);
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('pointerdown', onPointer);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('pointerdown', onPointer);
-    };
-  }, [moreOpen, closeMore]);
-
-  const onMoreKeyDown = (e: KeyboardEvent<HTMLLIElement>) => {
-    const links = Array.from(
-      moreRef.current?.querySelectorAll<HTMLElement>('.site-more-panel a') ?? [],
-    );
-    if (e.target === moreBtnRef.current && e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (moreOpen) links[0]?.focus();
-      else {
-        focusFirstMore.current = true;
-        setMoreOpen(true);
-      }
-      return;
-    }
-    if (!moreOpen || links.length === 0) return;
-    const i = links.indexOf(e.target as HTMLElement);
-    if (i < 0) return;
-    const move = (n: number) => {
-      e.preventDefault();
-      links[(n + links.length) % links.length]?.focus();
-    };
-    if (e.key === 'ArrowDown') move(i + 1);
-    else if (e.key === 'ArrowUp') move(i - 1);
-    else if (e.key === 'Home') move(0);
-    else if (e.key === 'End') move(links.length - 1);
-  };
 
   const current = (href: string) => (href === pathname ? ('page' as const) : undefined);
 
@@ -207,47 +125,7 @@ export function SiteHeader() {
                   </Link>
                 </li>
               ))}
-              <li
-                ref={moreRef}
-                className="site-more"
-                onKeyDown={onMoreKeyDown}
-                onBlur={(e) => {
-                  if (moreOpen && !e.currentTarget.contains(e.relatedTarget as Node | null))
-                    closeMore(false);
-                }}
-              >
-                <button
-                  ref={moreBtnRef}
-                  type="button"
-                  className="site-link site-more-btn"
-                  aria-expanded={moreOpen}
-                  aria-controls="site-more-panel"
-                  onClick={() => setMoreOpen((o) => !o)}
-                >
-                  {nav.more.label}
-                  <Chevron />
-                </button>
-                <ul
-                  id="site-more-panel"
-                  className="site-more-panel"
-                  data-open={moreOpen}
-                  inert={!moreOpen}
-                >
-                  {nav.more.items.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className="site-more-link"
-                        onClick={() => setMoreOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
             </ul>
-            <Login className="site-login-desktop" />
           </nav>
 
           <button
@@ -280,30 +158,11 @@ export function SiteHeader() {
                   aria-current={current(item.href)}
                   onClick={() => closeMenu(false)}
                 >
-                  {item.label}
+                  {item.menuLabel}
                 </Link>
               </li>
             ))}
-            <li>
-              <p className="site-sheet-group" id="site-sheet-more">
-                {nav.more.label}
-              </p>
-              <ul className="site-sheet-sub" aria-labelledby="site-sheet-more">
-                {nav.more.items.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="site-sheet-link site-sheet-sublink"
-                      onClick={() => closeMenu(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
           </ul>
-          <Login className="site-login-sheet" />
         </nav>
       </header>
     </>
